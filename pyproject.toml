@@ -11,6 +11,7 @@ python = "^3.10"
 yagooglesearch = "^1.9.0"
 beautifulsoup4 = "^4.12.3"
 flask = "^3.0.2"
+python-dotenv = "^1.0.1"
 
 
 [build-system]
