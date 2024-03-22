@@ -1,4 +1,6 @@
-from utils.proxy import get_free_proxies
+from bs4 import BeautifulSoup
+import requests
+from proxy import get_free_proxies
 from enum import Enum
 import yagooglesearch
 import re
@@ -56,6 +58,23 @@ def find_jobs(
 
     cleaner = JobSearchResultCleaner(job_site)
     return cleaner.clean(result)
+
+# TODO : Add a location to the return value of get_job_details
+def get_job_details(link: str) -> list[str]:
+    response = requests.get(link)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    title = soup.title.string
+    company_name = title.split("-")[0].strip()
+    position = title.split("-")[1].strip()
+
+    img = soup.find("img")
+    if img:
+        img_url = img["src"]
+    else:
+        img_url = None
+
+    return [company_name, position, img_url]
 
 
 class JobSearchResultCleaner:
