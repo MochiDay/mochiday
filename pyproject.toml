@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "job-search-in-hell"
+version = "0.1.0"
+description = "God-mode for job search."
+authors = ["Nataliya Karmarkar <nkarmarkar@usfca.edu>", "Xipu Li <xli200@usfca.edu>"]
+license = "Apache-2.0"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
