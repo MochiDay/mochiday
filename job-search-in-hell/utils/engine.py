@@ -1,4 +1,3 @@
-from typing import Any, Generator
 from utils.proxy import get_free_proxies
 from enum import Enum
 import yagooglesearch
