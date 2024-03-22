@@ -59,6 +59,7 @@ def find_jobs(
     cleaner = JobSearchResultCleaner(job_site)
     return cleaner.clean(result)
 
+
 # TODO : Add a location to the return value of get_job_details
 def get_job_details(link: str) -> list[str]:
     response = requests.get(link)
