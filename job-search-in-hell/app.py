@@ -8,12 +8,11 @@ from http import HTTPStatus
 load_dotenv()
 
 MERGENT_API_KEY = os.getenv("MERGENT_API_KEY")
-PORT = os.getenv("PORT")
 
-if PORT is None:
-    PORT = 3000
 
 logging.basicConfig(level=logging.INFO)
+
+
 app = Flask(__name__)
 
 
@@ -39,7 +38,3 @@ def mergent_task_handler():
 def perform_task(body):
     # TODO: Implement this function
     logging.info(f"Performing task: {body}")
-
-
-if __name__ == "__main__":
-    app.run(port=PORT)
