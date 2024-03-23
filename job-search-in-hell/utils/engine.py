@@ -65,15 +65,15 @@ def get_job_details(link: str) -> list[str]:
     response = requests.get(link)
     soup = BeautifulSoup(response.content, "html.parser")
 
-    title = soup.title.string
-    company_name = title.split("-")[0].strip()
-    position = title.split("-")[1].strip()
+    title = soup.title.string if soup.title else "Unknown"
+    company_name = title.split("-")[0].strip() if "-" in title else title.strip()
+    position = title.split("-")[1].strip() if "-" in title else "Unknown"
 
-    img = soup.find("img")
+    img = soup.find("img") 
     if img:
         img_url = img["src"]
     else:
-        img_url = None
+        img_url = None 
 
     return [company_name, position, img_url]
 

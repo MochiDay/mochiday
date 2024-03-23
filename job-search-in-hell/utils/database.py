@@ -14,3 +14,9 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 class SupabaseClient:
     def __init__(self):
         self.client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+    def insert_job(self, job):
+        self.client.table("jobs").insert(job).execute()
+
+
+        
