@@ -1,20 +1,32 @@
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
+import { SignedIn, UserButton, SignedOut, useUser } from "@clerk/remix";
+import type { MetaFunction } from "@remix-run/cloudflare";
+import { NavLink } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
+    { title: "MochiDay" },
     {
       name: "description",
-      content: "Welcome to Remix! Using Vite and Cloudflare!",
+      content: "Reclaim your life.",
     },
   ];
 };
 
-export const loader = ({ context }: LoaderFunctionArgs) => {
-  console.log(context.cloudflare.env.CLERK_PUBLISHABLE_KEY);
-  return null;
-};
-
 export default function Index() {
-  return <h1 className="text-3xl font-bold underline">Hello world!</h1>;
+  const { isSignedIn, user } = useUser();
+
+  return (
+    <div>
+      <SignedIn>
+        <h1>Index route</h1>
+        <p>You are signed in!</p>
+        {isSignedIn && <p>Your email is {user.firstName}</p>}
+        <UserButton />
+      </SignedIn>
+      <SignedOut>
+        <div>Home</div>
+        <NavLink to="/sign-in">Sign In</NavLink>
+      </SignedOut>
+    </div>
+  );
 }

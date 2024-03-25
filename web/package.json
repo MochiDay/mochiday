@@ -15,6 +15,8 @@
     "build-cf-types": "wrangler types"
   },
   "dependencies": {
+    "@clerk/remix": "^3.2.0",
+    "@clerk/themes": "^1.7.10",
     "@remix-run/cloudflare": "^2.8.1",
     "@remix-run/cloudflare-pages": "^2.8.1",
     "@remix-run/react": "^2.8.1",
