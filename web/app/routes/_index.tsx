@@ -25,7 +25,9 @@ export default function Index() {
       </SignedIn>
       <SignedOut>
         <div>Home</div>
-        <NavLink to="/sign-in">Sign In</NavLink>
+        <NavLink to="/sign-in">
+          <button className="btn">Sign In</button>
+        </NavLink>
       </SignedOut>
     </div>
   );
