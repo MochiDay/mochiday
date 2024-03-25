@@ -22,6 +22,8 @@ Read the [Get Started](https://firebase.google.com/docs/functions/get-started) g
 Make sure you activate the virtual environment before running the following commands:
 
 ```bash
+# make sure you have cd'd into the serverless directory
+python3 -m venv functions/venv
 source functions/venv/bin/activate
 ```
 
