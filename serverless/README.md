@@ -1,4 +1,3 @@
-
 # Local Development
 
 ## Firebase Setup
