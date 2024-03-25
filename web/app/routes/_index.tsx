@@ -1,6 +1,7 @@
 import { SignedIn, UserButton, SignedOut, useUser } from "@clerk/remix";
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { NavLink } from "@remix-run/react";
+import { toast } from "sonner";
 
 export const meta: MetaFunction = () => {
   return [
@@ -29,6 +30,9 @@ export default function Index() {
           <button className="btn">Sign In</button>
         </NavLink>
       </SignedOut>
+      <button onClick={() => toast.error("This is a sonner toast")}>
+        Render my toast
+      </button>
     </div>
   );
 }
