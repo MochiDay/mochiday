@@ -1,5 +1,5 @@
 # Dependencies for task queue functions.
-from google.cloud import tasks_v2
+# from google.cloud import tasks_v2
 from firebase_functions.options import RetryConfig, RateLimits, SupportedRegion
 
 # Dependencies for image backup.
@@ -25,9 +25,7 @@ JSON_FIELD_USER_ID = "user_id"
 def enqueue_jobs(req: https_fn.Request) -> https_fn.Response:
     # try:
     try:
-        # TODO: fix the json parsing
         json = req.json
-        print(req.mimetype)
         job_urls = json[JSON_FIELD_JOB_URLS]
         user_id = json[JSON_FIELD_USER_ID]
         print(json)
@@ -39,7 +37,6 @@ def enqueue_jobs(req: https_fn.Request) -> https_fn.Response:
 
     common_queue = functions.task_queue(COMMON_QUEUE, app=app)
     target_uri = get_function_url(COMMON_QUEUE)
-    print(app.credential.get_credential())
 
     for job_url in job_urls:
         body = {
@@ -75,6 +72,26 @@ def applyJob(req: tasks_fn.CallableRequest) -> https_fn.Response:
     try:
         job_url = req.data[JSON_FIELD_JOB_URL]
         user_id = req.data[JSON_FIELD_USER_ID]
+    except KeyError:
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+            message=f"Missing required fields: {JSON_FIELD_JOB_URL} and {JSON_FIELD_USER_ID}",
+        )
+    print(f"Applying job {job_url} for user {user_id}")
+    # TODO: Implement the job application logic here
+
+    return {"status": "ok"}
+
+
+@https_fn.on_request(
+    cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"])
+)
+def applyJobDirect(req: https_fn.Request) -> https_fn.Response:
+    """Apply a job directly without enqueuing it."""
+    try:
+        json = req.json
+        job_url = json[JSON_FIELD_JOB_URL]
+        user_id = json[JSON_FIELD_USER_ID]
     except KeyError:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
