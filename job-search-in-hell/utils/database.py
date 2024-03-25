@@ -18,5 +18,12 @@ class SupabaseClient:
     def insert_job(self, job):
         self.client.table("jobs").insert(job).execute()
 
-
+    def get_all_jobs(self):
+        return self.client.table("jobs").select("*").execute()
+    
+    def get_last_24hrs_jobs(self):
+        return self.client.table("jobs").select("*").execute()
+    
+    def get_last_3_jobs(self):
+        return self.client.table("jobs").select("*").limit(3).execute()
         
