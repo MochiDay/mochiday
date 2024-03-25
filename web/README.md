@@ -1,6 +1,17 @@
-# Welcome to Remix + Vite!
+# Welcome to MochiDay!
 
-📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/future/vite) for details on supported features.
+📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite
+docs](https://remix.run/docs/en/main/future/vite) for details on
+supported features.
+
+## Environment Variables
+
+Start by copying `.dev.vars.example` to `.dev.vars` and filling in the
+values.
+
+```sh
+cp .dev.vars.example .dev.vars
+```
 
 ## Typegen
 

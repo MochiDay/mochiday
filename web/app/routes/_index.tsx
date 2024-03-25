@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/cloudflare";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
 
 export const meta: MetaFunction = () => {
   return [
@@ -8,6 +8,11 @@ export const meta: MetaFunction = () => {
       content: "Welcome to Remix! Using Vite and Cloudflare!",
     },
   ];
+};
+
+export const loader = ({ context }: LoaderFunctionArgs) => {
+  console.log(context.cloudflare.env.CLERK_PUBLISHABLE_KEY);
+  return null;
 };
 
 export default function Index() {
