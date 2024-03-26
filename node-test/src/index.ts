@@ -60,21 +60,37 @@ async function uploadResume(page: any, resumePath: string) {
 
 async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidateDetails: any) {
     // Fill the form
+    await cursor.click('input[name="name"]');
     page.type('input[name="name"]', candidateDetails.name);
     await new Promise(resolve => setTimeout(resolve, 1000 * 2));
+
+    await cursor.click('input[name="email"]');
     page.type('input[name="email"]', candidateDetails.email);
     await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+
+    await cursor.click('input[name="org"]');
     page.type('input[name="org"]', candidateDetails.org);
     await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+
+    await cursor.click('input[name="phone"]');
     page.type('input[name="phone"]', candidateDetails.phone);
     await new Promise(resolve => setTimeout(resolve, 1000 * 2));
+
+    await cursor.click('input[name="location"]');
     page.type('input[name="location"]', candidateDetails.location);
     await new Promise(resolve => setTimeout(resolve, 1000 * 4));
+
+    cursor.click();
+    await cursor.click('input[name="urls[LinkedIn]"]');
     page.type('input[name="urls[LinkedIn]"]', candidateDetails.linkedin);
     await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+
+    cursor.click();
     console.log('Filled in the details');
     await page.waitForSelector(selector)
     await cursor.click(selector)
+    
+    // await for the response endsWith /thanks
     await page.waitForResponse(response => response.url().endsWith('/thanks')).then((response:any) => {
         console.log('Submitted the application');
         console.log(response.url()); //logging the response url if it ends with /thanks
