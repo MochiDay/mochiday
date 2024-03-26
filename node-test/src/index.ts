@@ -20,7 +20,7 @@ async function launchBrowser() {
 
 async function getCandidateDetailsFromDB() { // fetch by id
     return {
-        name: 'John Doe',
+        name: 'Johnny Doey',
         email: 'email@gmail.com',
         phone: '1234567890',
         linkedin: 'https://linkedin.com/in/johndoe',
@@ -84,7 +84,7 @@ async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidat
         console.error('That means something wrong happened. We tell users to handle this application themselves.');
         return false;
     });
-    return false;
+    return;
 }
 
 async function applyToJob(link: string, page: any, cursor: any, selector: any, candidateDetails: any) {
@@ -102,10 +102,7 @@ async function applyToJob(link: string, page: any, cursor: any, selector: any, c
 
     }
     // Fill the form
-    const formFilled = await fillFormAndSubmit(page, cursor, selector, candidateDetails);
-    if (!formFilled) {
-        console.error('Form not filled');
-    }
+    await fillFormAndSubmit(page, cursor, selector, candidateDetails);
     return;
 }
 
