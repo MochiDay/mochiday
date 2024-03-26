@@ -1,0 +1,22 @@
+{
+    "extends": "@sindresorhus/tsconfig",
+    "compilerOptions": {
+      "outDir": "./dist/",                              /* Specify an output folder for all emitted files. */
+      "lib": ["ES2022"],
+      "target": "ES2022",
+      "declarationMap": true,                           /* Create sourcemaps for d.ts files. */
+      "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
+      "importsNotUsedAsValues": "remove",               /* Specify emit/checking behavior for imports that are only used for types. */    
+      "isolatedModules": true,                          /* Ensure that each file can be safely transpiled without relying on other imports. */
+      "esModuleInterop": true
+    },
+    "include": [
+      "./src/**/*.ts"
+    ],
+    "ts-node": {
+      "esm": true,
+      "transpileOnly": true,
+      "files": true,
+      "experimentalResolver": true
+    }
+  }
