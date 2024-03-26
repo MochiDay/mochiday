@@ -4,8 +4,4 @@
       "./serverless/functions",
       "./web"
     ],
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-    },
-    "eslint.validate": ["typescript"]
   }
