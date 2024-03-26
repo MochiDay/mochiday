@@ -10,8 +10,13 @@ Start by copying `.dev.vars.example` to `.dev.vars` and filling in the
 values.
 
 ```sh
-cp .dev.vars.example .dev.vars
+npm run init
 ```
+
+## Supabase
+
+If you made any changes to the Supabase schema, you will need to
+regenerate the types following [the guide](https://supabase.com/docs/reference/javascript/typescript-support).
 
 ## Typegen
 
