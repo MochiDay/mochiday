@@ -1,3 +1,5 @@
 __pycache__
 yagooglesearch.py.log
 .env
+.vscode
+node_modules
