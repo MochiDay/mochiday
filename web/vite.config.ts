@@ -7,6 +7,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { getLoadContext } from "./load-context";
 
 export default defineConfig({
+  optimizeDeps: {
+    include: ["esm-dep > cjs-dep"],
+  },
   plugins: [
     remixCloudflareDevProxy({ getLoadContext }),
     remix(),

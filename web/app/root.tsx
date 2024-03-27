@@ -42,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-        <Toaster richColors />
+        <Toaster richColors position="top-right" />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -51,7 +51,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-  const { toast } = useLoaderData<typeof loader>();
+  const { toast } = useLoaderData() as {
+    toast:
+      | {
+          message: string;
+          type: "error" | "warning" | "success" | "info";
+          description?: string | undefined;
+        }
+      | undefined;
+  };
 
   useEffect(() => {
     if (toast?.type === "error") {
