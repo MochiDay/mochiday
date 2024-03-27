@@ -9,6 +9,7 @@ import puppeteer from "puppeteer-extra";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+
 async function launchBrowser() {
     // @ts-ignore
     puppeteer.use(StealthPlugin())
@@ -58,6 +59,50 @@ async function uploadResume(page: any, resumePath: string) {
     return false;
 }
 
+async function answerSponsershipQuestion(page: any) {
+    console.log('Answering sponsorship question');
+    const sponsorshipQuestions = await page.$('input[name^="cards"][name$="][baseTemplate]"]');
+
+    // get the name field
+    const nameField = await page.evaluate((element: { name: any; }) => element.name, sponsorshipQuestions);
+    // get the form unique code from the name field
+    const name_code = nameField.split('[')[1].split(']')[0];
+
+    
+    if (sponsorshipQuestions) {
+        // using puppeteer to get the value of the input field
+        const inputFieldValue = await page.evaluate((element: { value: any; }) => element.value, sponsorshipQuestions);
+        if (inputFieldValue) {
+            const questionDetails = JSON.parse(inputFieldValue);
+            // Check if the question text contains "sponsorship"
+            console.log(questionDetails);
+            const { fields } = questionDetails;
+            var index = 0;
+            for (const field of fields) {
+                if (field.text.toLowerCase().includes('sponsorship')) {
+                    console.log(field.text);
+                    // Find the "Yes" option and click it
+                    const yesOption = field.options.find((option: { text: string; }) => option.text.toLowerCase() === 'yes');
+                    if (yesOption) {
+                        console.log(yesOption.optionId);
+                        const field_number = ["field", index].join('');
+                        await page.click(`input[type="radio"][value="Yes"][name="cards[${name_code}][${field_number}]"`);
+                        console.log('Answered sponsorship question');
+                    } else {
+                        console.error('Yes option not found for the sponsorship question');
+                    }
+                }
+                index += 1;
+        }
+        
+        }
+                
+    }
+}
+
+
+
+
 async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidateDetails: any) {
     // Fill the form
     await cursor.click('input[name="name"]');
@@ -68,30 +113,27 @@ async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidat
     page.type('input[name="email"]', candidateDetails.email);
     await new Promise(resolve => setTimeout(resolve, 1000 * 3));
 
-    await cursor.click('input[name="org"]');
-    page.type('input[name="org"]', candidateDetails.org);
-    await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    // await cursor.click('input[name="org"]');
+    // page.type('input[name="org"]', candidateDetails.org);
+    // await new Promise(resolve => setTimeout(resolve, 1000 * 3));
 
-    await cursor.click('input[name="phone"]');
-    page.type('input[name="phone"]', candidateDetails.phone);
-    await new Promise(resolve => setTimeout(resolve, 1000 * 2));
+    // await cursor.click('input[name="phone"]');
+    // page.type('input[name="phone"]', candidateDetails.phone);
+    // await new Promise(resolve => setTimeout(resolve, 1000 * 2));
 
-    await cursor.click('input[name="location"]');
-    page.type('input[name="location"]', candidateDetails.location);
-    await new Promise(resolve => setTimeout(resolve, 1000 * 4));
+    // await cursor.click('input[name="location"]');
+    // page.type('input[name="location"]', candidateDetails.location);
+    // await new Promise(resolve => setTimeout(resolve, 1000 * 4));
 
-    cursor.click();
-    await cursor.click('input[name="urls[LinkedIn]"]');
     page.type('input[name="urls[LinkedIn]"]', candidateDetails.linkedin);
     await new Promise(resolve => setTimeout(resolve, 1000 * 3));
 
-    cursor.click();
     console.log('Filled in the details');
     await page.waitForSelector(selector)
     await cursor.click(selector)
-    
+
     // await for the response endsWith /thanks
-    await page.waitForResponse(response => response.url().endsWith('/thanks')).then((response:any) => {
+    await page.waitForResponse((response: { url: () => string; }) => response.url().endsWith('/thanks')).then((response:any) => {
         console.log('Submitted the application');
         console.log(response.url()); //logging the response url if it ends with /thanks
         return true;
@@ -117,6 +159,7 @@ async function applyToJob(link: string, page: any, cursor: any, selector: any, c
         console.error('Resume not uploaded');
 
     }
+    await answerSponsershipQuestion(page);
     // Fill the form
     await fillFormAndSubmit(page, cursor, selector, candidateDetails);
     return;
@@ -127,10 +170,10 @@ async function applyToJob(link: string, page: any, cursor: any, selector: any, c
     const page = await browser.newPage();
     const cursor = createCursor(page);
     const selector = 'button[type="button"]';
-    const link = 'https://jobs.lever.co/SprinterHealth/7d5b4207-299b-4520-83e3-fecf835e0efc/apply';
+    // const link = 'https://jobs.lever.co/attentive/ae899b91-8ec1-4420-9e42-cf0abafda349/apply';
+    const link = 'https://jobs.lever.co/Voxel/87e2acda-8b4d-4fd9-aafe-2b606f0e3d1f/apply';
     const candidateDetails = await getCandidateDetailsFromDB();
-    // await uploadResume(page);
-    // await fillFormAndSubmit(page, cursor, candidateDetails);
     await applyToJob(link, page, cursor, selector, candidateDetails);
     await browser.close();
   })();
+
