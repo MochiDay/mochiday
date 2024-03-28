@@ -51,7 +51,7 @@ async function uploadResume(page: any, resumePath: string) {
 }
 
 
-async function answerSponsershipQuestion(page: any, auth_to_work_in_usa: boolean, future_sponsership_required: boolean) {
+async function answerSponsershipQuestions(page: any, auth_to_work_in_usa: boolean, future_sponsership_required: boolean) {
     console.log('Answering sponsorship questions');
 
     const auth = auth_to_work_in_usa ? "Yes" : "No";
@@ -192,7 +192,7 @@ async function applyToJob(link: string, page: any, cursor: any, selector: any, c
 
     }
     // Answer the sponsorship question
-    await answerSponsershipQuestion(page, candidate.auth_to_work_in_usa, candidate.future_sponsership_required);
+    await answerSponsershipQuestions(page, candidate.auth_to_work_in_usa, candidate.future_sponsership_required);
     // Fill the rest of form
     await fillFormAndSubmit(page, cursor, selector, candidate);
     return;
