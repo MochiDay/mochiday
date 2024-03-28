@@ -51,13 +51,16 @@ async function uploadResume(page: any, resumePath: string) {
 }
 
 
-async function answerSponsershipQuestion(page: any) {
-    console.log('Answering sponsorship question');
+async function answerSponsershipQuestion(page: any, auth_to_work_in_usa: boolean, future_sponsership_required: boolean) {
+    console.log('Answering sponsorship questions');
+
+    const auth = auth_to_work_in_usa ? "Yes" : "No";
+    const sponsorship = future_sponsership_required ? "Yes" : "No";
+
     const sponsorshipQuestions = await page.$('input[name^="cards"][name$="][baseTemplate]"]');
 
-    // get the name field
-    const nameField = await page.evaluate((element: { name: any; }) => element.name, sponsorshipQuestions);
     // get the form unique code from the name field
+    const nameField = await page.evaluate((element: { name: any; }) => element.name, sponsorshipQuestions);
     const name_code = nameField.split('[')[1].split(']')[0];
 
     
@@ -67,8 +70,9 @@ async function answerSponsershipQuestion(page: any) {
         if (inputFieldValue) {
             const questionDetails = JSON.parse(inputFieldValue);
             // Check if the question text contains "sponsorship"
-            console.log(questionDetails);
             const { fields } = questionDetails;
+
+            // Answering the sponsorship question
             var index = 0;
             for (const field of fields) {
                 if (field.text.toLowerCase().includes('sponsorship')) {
@@ -76,19 +80,35 @@ async function answerSponsershipQuestion(page: any) {
                     // Find the "Yes" option and click it
                     const yesOption = field.options.find((option: { text: string; }) => option.text.toLowerCase() === 'yes');
                     if (yesOption) {
-                        console.log(yesOption.optionId);
                         const field_number = ["field", index].join('');
-                        await page.click(`input[type="radio"][value="Yes"][name="cards[${name_code}][${field_number}]"`);
+                        await page.click(`input[type="radio"][value=${sponsorship}][name="cards[${name_code}][${field_number}]"`);
                         console.log('Answered sponsorship question');
                     } else {
                         console.error('Yes option not found for the sponsorship question');
                     }
                 }
                 index += 1;
-        }
-        
-        }
+            }
+
+            // Answering the authorization question
+            var index = 0;
+            for (const field of fields) {
+                if (field.text.toLowerCase().includes('authorization') || field.text.toLowerCase().includes('authorized')) {
+                    console.log(field.text);
+                    // Find the "Yes" option and click it
+                    const yesOption = field.options.find((option: { text: string; }) => option.text.toLowerCase() === 'yes');
+                    if (yesOption) {
+                        const field_number = ["field", index].join('');
+                        await page.click(`input[type="radio"][value=${auth}][name="cards[${name_code}][${field_number}]"`);
+                        console.log('Answered authorization question');
+                    } else {
+                        console.error('Yes option not found for the authorization question');
+                    }
+                }
+                index += 1;
+            }
                 
+        }
     }
 }
 
@@ -172,7 +192,7 @@ async function applyToJob(link: string, page: any, cursor: any, selector: any, c
 
     }
     // Answer the sponsorship question
-    await answerSponsershipQuestion(page);
+    await answerSponsershipQuestion(page, candidate.auth_to_work_in_usa, candidate.future_sponsership_required);
     // Fill the rest of form
     await fillFormAndSubmit(page, cursor, selector, candidate);
     return;
@@ -191,6 +211,7 @@ async function details(user_id: string) {
 
 export async function main(user_id: string): Promise<void> {
     const candidate = await details(user_id);
+    // console.log(candidate);
     const browser = await launchBrowser();
     const page = await browser.newPage();
     const cursor = createCursor(page);
@@ -202,4 +223,3 @@ export async function main(user_id: string): Promise<void> {
 }
 
 main('5');
-
