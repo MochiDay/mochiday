@@ -4,7 +4,8 @@ import { JobRow } from "./JobRow";
 export function JobsPanel({ jobs }: { jobs: Job[] }) {
   return (
     <div
-      className="overflow-y-auto relative h-full"
+      // two columns
+      className="grid grid-cols-2 gap-4 w-full max-w-8xl mx-2"
       style={{ scrollbarWidth: "none" }}
     >
       {jobs.map((job) => (
