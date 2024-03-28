@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import puppeteer from "puppeteer-extra";
+import {getUserDetails} from '../database/queries.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -19,16 +20,6 @@ async function launchBrowser() {
     return browser;
 }
 
-async function getCandidateDetailsFromDB() { // fetch by id
-    return {
-        name: 'Johnny Doey',
-        email: 'email@gmail.com',
-        phone: '1234567890',
-        linkedin: 'https://linkedin.com/in/johndoe',
-        github: 'https://github.com/johndoe',
-        location: 'New York, NY',
-        org: 'ABC Startup',
-    }};
 
 async function uploadResume(page: any, resumePath: string) {
     const input = await page.$('input[id="resume-upload-input"]');
@@ -58,6 +49,7 @@ async function uploadResume(page: any, resumePath: string) {
     });
     return false;
 }
+
 
 async function answerSponsershipQuestion(page: any) {
     console.log('Answering sponsorship question');
@@ -101,32 +93,51 @@ async function answerSponsershipQuestion(page: any) {
 }
 
 
-
-
-async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidateDetails: any) {
+// TODO : Add auth_to_work, hispanic?, race, gender, veteran, disability, pronouns, website, website, github, twitter
+// TODO : download and upload resume from storage
+async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidate: any) {
     // Fill the form
-    await cursor.click('input[name="name"]');
-    page.type('input[name="name"]', candidateDetails.name);
-    await new Promise(resolve => setTimeout(resolve, 1000 * 2));
+    if (candidate.first_name && candidate.last_name && candidate.middle_name) {
+        await cursor.click('input[name="name"]');
+        page.type('input[name="name"]', candidate.first_name + ' ' + candidate.middle_name + ' ' + candidate.last_name);
+        await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    }
 
-    await cursor.click('input[name="email"]');
-    page.type('input[name="email"]', candidateDetails.email);
-    await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    if (candidate.first_name && candidate.last_name && !candidate.middle_name) {
+        await cursor.click('input[name="name"]');
+        page.type('input[name="name"]', candidate.first_name + ' ' + candidate.last_name);
+        await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    }
 
-    // await cursor.click('input[name="org"]');
-    // page.type('input[name="org"]', candidateDetails.org);
-    // await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    if (candidate.email) {
+        await cursor.click('input[name="email"]');
+        page.type('input[name="email"]', candidate.email);
+        await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    }
 
-    // await cursor.click('input[name="phone"]');
-    // page.type('input[name="phone"]', candidateDetails.phone);
-    // await new Promise(resolve => setTimeout(resolve, 1000 * 2));
+    if (candidate.current_company) {
+        await cursor.click('input[name="org"]');
+        page.type('input[name="org"]', candidate.current_company);
+        await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    }
+    
+    if (candidate.phone) {
+        await cursor.click('input[name="phone"]');
+        page.type('input[name="phone"]', candidate.phone);
+        await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    }
 
-    // await cursor.click('input[name="location"]');
-    // page.type('input[name="location"]', candidateDetails.location);
-    // await new Promise(resolve => setTimeout(resolve, 1000 * 4));
+    if (candidate.current_location) {
+        await cursor.click('input[name="location"]');
+        page.type('input[name="location"]', candidate.current_location);
+        await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    }
 
-    page.type('input[name="urls[LinkedIn]"]', candidateDetails.linkedin);
-    await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    if (candidate.linkedin) {
+        await cursor.click('input[name="urls[LinkedIn]"]');
+        page.type('input[name="urls[LinkedIn]"]', candidate.linkedin);
+        await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+    }
 
     console.log('Filled in the details');
     await page.waitForSelector(selector)
@@ -145,7 +156,8 @@ async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidat
     return;
 }
 
-async function applyToJob(link: string, page: any, cursor: any, selector: any, candidateDetails: any) {
+
+async function applyToJob(link: string, page: any, cursor: any, selector: any, candidate: any) {
     // Navigate the page to a URL
     await page.goto(link);
 
@@ -159,21 +171,35 @@ async function applyToJob(link: string, page: any, cursor: any, selector: any, c
         console.error('Resume not uploaded');
 
     }
+    // Answer the sponsorship question
     await answerSponsershipQuestion(page);
-    // Fill the form
-    await fillFormAndSubmit(page, cursor, selector, candidateDetails);
+    // Fill the rest of form
+    await fillFormAndSubmit(page, cursor, selector, candidate);
     return;
 }
 
-(async () => {
+async function details(user_id: string) {
+    const userDetails = await getUserDetails(user_id)
+    if (userDetails.error) {
+        console.error('Error fetching user details');
+        return;
+    }
+
+    const candidate = userDetails.data[0];
+    return candidate;
+}
+
+export async function main(user_id: string): Promise<void> {
+    const candidate = await details(user_id);
     const browser = await launchBrowser();
     const page = await browser.newPage();
     const cursor = createCursor(page);
     const selector = 'button[type="button"]';
-    // const link = 'https://jobs.lever.co/attentive/ae899b91-8ec1-4420-9e42-cf0abafda349/apply';
     const link = 'https://jobs.lever.co/Voxel/87e2acda-8b4d-4fd9-aafe-2b606f0e3d1f/apply';
-    const candidateDetails = await getCandidateDetailsFromDB();
-    await applyToJob(link, page, cursor, selector, candidateDetails);
+    await applyToJob(link, page, cursor, selector, candidate);
     await browser.close();
-  })();
+    return;
+}
+
+main('5');
 
