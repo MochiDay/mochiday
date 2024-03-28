@@ -117,6 +117,8 @@ async function answerSponsershipQuestions(page: any, auth_to_work_in_usa: boolea
 // TODO : download and upload resume from storage
 async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidate: any) {
     // Fill the form
+    console.log('Filling in the details');
+
     if (candidate.first_name && candidate.last_name && candidate.middle_name) {
         await cursor.click('input[name="name"]');
         page.type('input[name="name"]', candidate.first_name + ' ' + candidate.middle_name + ' ' + candidate.last_name);
@@ -158,6 +160,42 @@ async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidat
         page.type('input[name="urls[LinkedIn]"]', candidate.linkedin);
         await new Promise(resolve => setTimeout(resolve, 1000 * 3));
     }
+    
+    // check if the form has eeo["Gender"] field
+    const eeoGender = await page.$('select[name="eeo[gender]"]');
+    if (eeoGender) {
+        const options = await page.$$eval('select[name="eeo[gender]"] option', options =>
+        options.map(option => ({
+            originalValue: option.value,
+            lowercaseValue: option.value.toLowerCase()
+        }))
+    );
+        console.log(options);
+
+        const genderValue = candidate.gender.toLowerCase();
+        const option = options.find(opt => opt.lowercaseValue === genderValue);
+        if (option) {
+            await page.select('select[name="eeo[gender]"]', option.originalValue);
+        }
+    }
+
+    const eeoVeteran = await page.$('select[name="eeo[veteran]"]');
+    if (eeoVeteran) {
+        const options = await page.$$eval('select[name="eeo[veteran]"] option', options =>
+        options.map(option => ({
+            originalValue: option.value,
+            lowercaseValue: option.value.toLowerCase()
+        }))
+    );
+        console.log(options);
+
+        const veteranValue = candidate.gender.toLowerCase();
+        const option = options.find(opt => opt.lowercaseValue === veteranValue);
+        if (option) {
+            await page.select('select[name="eeo[veteran]"]', option.originalValue);
+        }
+    }
+
 
     console.log('Filled in the details');
     await page.waitForSelector(selector)
