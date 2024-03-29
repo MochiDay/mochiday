@@ -10,5 +10,27 @@ export type NavItem = {
 };
 
 export type Config = {
+  jobStatusSectionByStatus: Record<
+    JobStatus,
+    { title: string; gridCols: number; gridGap: string }
+  >;
+  sideBarItemsByType: Record<SideBarType, { title: string }>;
   dashboardNavItems: NavItem[];
 };
+
+export enum SideBarType {
+  JOBS = "jobs",
+  APPLICATIONS = "applications",
+  SETTINGS = "settings",
+}
+
+export enum JobStatus {
+  IN_PROGRESS = "in_progress",
+  APPLIED = "applied",
+  ACTION_REQUIRED = "action_required",
+}
+
+export enum JobRowType {
+  NEW_JOB = "new_job",
+  ACTION_REQUIRED = "action_required",
+}

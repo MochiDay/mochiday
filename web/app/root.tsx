@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useNavigation,
 } from "@remix-run/react";
 import type { LinksFunction, LoaderFunction } from "@remix-run/cloudflare";
 // eslint-disable-next-line import/no-unresolved
@@ -14,7 +15,7 @@ import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClerkApp, ClerkErrorBoundary } from "@clerk/remix";
 import { dark, neobrutalism } from "@clerk/themes";
 import { getToast } from "remix-toast";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Toaster, toast as notify } from "sonner";
 
 export const links: LinksFunction = () => [
@@ -24,7 +25,6 @@ export const links: LinksFunction = () => [
 export const loader: LoaderFunction = (args) => {
   return rootAuthLoader(args, async ({ request }) => {
     const { toast, headers } = await getToast(request);
-    // Important to pass in the headers so the toast is cleared properly
     return json({ toast }, { headers });
   });
 };
@@ -42,9 +42,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-        <Toaster richColors position="top-right" />
         <ScrollRestoration />
         <Scripts />
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );
@@ -61,12 +61,36 @@ function App() {
       | undefined;
   };
 
+  const navigation = useNavigation();
+  const navigationState = useRef(navigation.state);
+  const toastId = useRef<string | number | null>(null);
+
+  useEffect(() => {
+    navigationState.current = navigation.state;
+    if (toastId.current && navigationState.current === "idle") {
+      notify.dismiss(toastId.current);
+    }
+    if (navigationState.current === "loading") {
+      const timeout = setTimeout(() => {
+        if (navigationState.current === "loading") {
+          toastId.current = notify.info("Still loading...", {
+            duration: 30000,
+            closeButton: true,
+          });
+        }
+        return () => clearTimeout(timeout);
+      }, 1000);
+    }
+  }, [navigation.state]);
+
   useEffect(() => {
     if (toast?.type === "error") {
-      notify.error(toast.message);
+      const timeOutId = setTimeout(() => notify.error(toast.message), 1);
+      return () => clearTimeout(timeOutId);
     }
     if (toast?.type === "success") {
-      notify.success(toast.message);
+      const timeOutId = setTimeout(() => notify.success(toast.message), 1);
+      return () => clearTimeout(timeOutId);
     }
   }, [toast]);
   return <Outlet />;

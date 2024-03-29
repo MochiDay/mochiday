@@ -1,7 +1,9 @@
 import WoodenLine from "~/img/wooden-line.svg";
 import { IconReload } from "@tabler/icons-react";
+import { SideBarType } from "~/types/general";
+import { AppConfig } from "~/config/config";
 
-export default function JobsSideBar() {
+export default function SideBar({ type }: { type: SideBarType }) {
   return (
     <div
       className="sticky z-10 top-10 pr-2 2xl:pr-10 flex flex-col justify-start pl-10 2xl:pl-0"
@@ -18,7 +20,7 @@ export default function JobsSideBar() {
             inlineSize: "fit-content",
           }}
         >
-          Fresh Jobs
+          {AppConfig.sideBarItemsByType[type].title}
         </h1>
         <img src={WoodenLine} alt="Wooden Line" className="-ml-4 h-50" />
       </div>

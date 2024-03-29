@@ -7,7 +7,9 @@ export default function Dashboard() {
       <DashboardNavBar />
       <div className="relative isolate flex min-w-0 flex-1 flex-col py-2 pr-1">
         <div className="w-full h-full rounded-xl border-4  pr-1  border-black bg-[#FDF6E5]">
-          <Outlet />
+          <div className="flex flex-row w-full h-full overflow-y-auto justify-center items-center">
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>
