@@ -5,3 +5,24 @@
 .cl-internal-vwxx4q {
     display: none;
 }
+
+::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #000;
+    border-radius: 999px;
+  }
+
+  /* style text selection color */
+
+    ::selection {
+        background-color: #FF79C6;
+        color: #000;
+    }

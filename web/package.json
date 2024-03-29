@@ -4,6 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
+    "init": "npm install && cp .dev.vars.example .dev.vars",
     "build": "remix vite:build",
     "deploy": "npm run build && wrangler pages deploy ./build/client",
     "dev": "remix vite:dev",
@@ -20,6 +21,8 @@
     "@remix-run/cloudflare": "^2.8.1",
     "@remix-run/cloudflare-pages": "^2.8.1",
     "@remix-run/react": "^2.8.1",
+    "@supabase/supabase-js": "^2.40.0",
+    "@tabler/icons-react": "^3.1.0",
     "isbot": "^4.1.0",
     "miniflare": "^3.20231030.4",
     "react": "^18.2.0",
