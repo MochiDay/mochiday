@@ -156,13 +156,12 @@ async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidat
         await new Promise(resolve => setTimeout(resolve, 1000 * 3));
     }
 
-    if (candidate.linkedin) {
+    if (candidate.linkedin_url) {
         await cursor.click('input[name="urls[LinkedIn]"]');
-        page.type('input[name="urls[LinkedIn]"]', candidate.linkedin);
+        page.type('input[name="urls[LinkedIn]"]', candidate.linkedin_url);
         await new Promise(resolve => setTimeout(resolve, 1000 * 3));
     }
     
-    // check if the form has eeo["Gender"] field
     const eeoGender = await page.$('select[name="eeo[gender]"]');
     if (eeoGender) {
         const options = await page.$$eval('select[name="eeo[gender]"] option', options =>
@@ -171,12 +170,29 @@ async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidat
             lowercaseValue: option.value.toLowerCase()
         }))
     );
-        console.log(options);
+        // console.log(options);
 
         const genderValue = candidate.gender.toLowerCase();
         const option = options.find(opt => opt.lowercaseValue === genderValue);
         if (option) {
             await page.select('select[name="eeo[gender]"]', option.originalValue);
+        }
+    }
+
+    const eeoRace = await page.$('select[name="eeo[race]"]');
+    if (eeoRace) {
+        const options = await page.$$eval('select[name="eeo[race]"] option', options =>
+        options.map(option => ({
+            originalValue: option.value,
+            lowercaseValue: option.value.toLowerCase()
+        }))
+    );
+        // console.log(options);
+
+        const raceValue = candidate.race.toLowerCase();
+        const option = options.find(opt => opt.lowercaseValue === raceValue);
+        if (option) {
+            await page.select('select[name="eeo[race]"]', option.originalValue);
         }
     }
 
@@ -188,9 +204,9 @@ async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidat
             lowercaseValue: option.value.toLowerCase()
         }))
     );
-        console.log(options);
+        // console.log(options);
 
-        const veteranValue = candidate.gender.toLowerCase();
+        const veteranValue = candidate.veteran_status.toLowerCase();
         const option = options.find(opt => opt.lowercaseValue === veteranValue);
         if (option) {
             await page.select('select[name="eeo[veteran]"]', option.originalValue);
@@ -255,7 +271,7 @@ export async function main(user_id: string): Promise<void> {
     const page = await browser.newPage();
     const cursor = createCursor(page);
     const selector = 'button[type="button"]';
-    const link = 'https://jobs.lever.co/attentive/ae899b91-8ec1-4420-9e42-cf0abafda349/apply';
+    const link = 'https://jobs.lever.co/Voxel/87e2acda-8b4d-4fd9-aafe-2b606f0e3d1f/apply';
     await applyToJob(link, page, cursor, selector, candidate);
     await browser.close();
     return;
