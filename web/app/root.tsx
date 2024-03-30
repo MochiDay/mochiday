@@ -9,7 +9,8 @@ import {
   useNavigation,
 } from "@remix-run/react";
 import type { LinksFunction, LoaderFunction } from "@remix-run/cloudflare";
-
+// eslint-disable-next-line import/no-unresolved
+import stylesheet from "~/tailwind.css?url";
 import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClerkApp, ClerkErrorBoundary } from "@clerk/remix";
 import { dark, neobrutalism } from "@clerk/themes";
@@ -17,8 +18,9 @@ import { getToast } from "remix-toast";
 import { useEffect, useRef } from "react";
 import { Toaster, toast as notify } from "sonner";
 
-import styles from "./tailwind.css";
-export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: stylesheet },
+];
 
 export const loader: LoaderFunction = (args) => {
   return rootAuthLoader(args, async ({ request }) => {

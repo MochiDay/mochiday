@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-export default {
+module.exports = {
   content: ["./app/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {},
