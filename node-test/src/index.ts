@@ -114,7 +114,7 @@ async function answerSponsershipQuestions(page: any, auth_to_work_in_usa: boolea
 }
 
 
-// TODO : Add auth_to_work, hispanic?, race, gender, veteran, disability, pronouns, website, website, github, twitter
+// TODO : Add hispanic?, disability, pronouns
 // TODO : download and upload resume from storage
 async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidate: any) {
     // Fill the form
@@ -156,11 +156,34 @@ async function fillFormAndSubmit(page: any, cursor: any, selector: any, candidat
         await new Promise(resolve => setTimeout(resolve, 1000 * 3));
     }
 
-    if (candidate.linkedin_url) {
+    const linkedin = await page.$('input[name="urls[LinkedIn]"]');
+    if (candidate.linkedin_url && linkedin) {
         await cursor.click('input[name="urls[LinkedIn]"]');
         page.type('input[name="urls[LinkedIn]"]', candidate.linkedin_url);
         await new Promise(resolve => setTimeout(resolve, 1000 * 3));
     }
+
+    const github = await page.$('input[name="urls[GitHub]"]');
+    if (candidate.github_url && github) {
+        await cursor.click('input[name="urls[GitHub]"]');
+        page.type('input[name="urls[GitHub]"]', candidate.github_url);
+        await new Promise(resolve => setTimeout(resolve, 1000 * 1));
+    }
+
+    const twitter = await page.$('input[name="urls[Twitter]"]');
+    if (candidate.twitter_url && twitter) {
+        await cursor.click('input[name="urls[Twitter]"]');
+        page.type('input[name="urls[Twitter]"]', candidate.twitter_url);
+        await new Promise(resolve => setTimeout(resolve, 1000 * 2));
+    }
+
+    const website = await page.$('input[name="urls[Portfolio]"]');
+    if (candidate.website_url && website) {
+        await cursor.click('input[name="urls[Portfolio]"]');
+        page.type('input[name="urls[Portfolio]"]', candidate.website_url);
+        await new Promise(resolve => setTimeout(resolve, 1000 * 2));
+    }
+
     
     const eeoGender = await page.$('select[name="eeo[gender]"]');
     if (eeoGender) {
