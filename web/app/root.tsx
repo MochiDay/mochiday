@@ -8,7 +8,7 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import type { LoaderFunction } from "@remix-run/cloudflare";
+import type { LinksFunction, LoaderFunction } from "@remix-run/cloudflare";
 
 import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClerkApp, ClerkErrorBoundary } from "@clerk/remix";
@@ -17,7 +17,8 @@ import { getToast } from "remix-toast";
 import { useEffect, useRef } from "react";
 import { Toaster, toast as notify } from "sonner";
 
-import "./tailwind.css";
+import styles from "./tailwind.css";
+export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
 export const loader: LoaderFunction = (args) => {
   return rootAuthLoader(args, async ({ request }) => {
