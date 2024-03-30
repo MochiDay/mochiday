@@ -73,10 +73,10 @@ async function answerSponsershipQuestions(page: any, auth_to_work_in_usa: boolea
             const { fields } = questionDetails;
 
             // Answering the sponsorship question
+            //TODO : Check if the input is a radio button or a dropdown or multiple-choice
             var index = 0;
             for (const field of fields) {
                 if (field.text.toLowerCase().includes('sponsorship')) {
-                    console.log(field.text);
                     // Find the "Yes" option and click it
                     const yesOption = field.options.find((option: { text: string; }) => option.text.toLowerCase() === 'yes');
                     if (yesOption) {
@@ -91,9 +91,10 @@ async function answerSponsershipQuestions(page: any, auth_to_work_in_usa: boolea
             }
 
             // Answering the authorization question
+            //TODO : Check if the input is a radio button or a dropdown or multiple-choice
             var index = 0;
             for (const field of fields) {
-                if (field.text.toLowerCase().includes('authorization') || field.text.toLowerCase().includes('authorized')) {
+                if ((field.text.toLowerCase().includes('authorization') || field.text.toLowerCase().includes('authorized')) && field.type !== 'text' && field.type !== 'textarea') {
                     console.log(field.text);
                     // Find the "Yes" option and click it
                     const yesOption = field.options.find((option: { text: string; }) => option.text.toLowerCase() === 'yes');
@@ -254,7 +255,7 @@ export async function main(user_id: string): Promise<void> {
     const page = await browser.newPage();
     const cursor = createCursor(page);
     const selector = 'button[type="button"]';
-    const link = 'https://jobs.lever.co/Voxel/87e2acda-8b4d-4fd9-aafe-2b606f0e3d1f/apply';
+    const link = 'https://jobs.lever.co/attentive/ae899b91-8ec1-4420-9e42-cf0abafda349/apply';
     await applyToJob(link, page, cursor, selector, candidate);
     await browser.close();
     return;
