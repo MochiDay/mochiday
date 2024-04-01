@@ -7,4 +7,8 @@ export async function getUserDetails(user_id: string) {
         .eq('user_id', user_id)
 }
 
-
+export async function getAllJobs() {
+    return supabase
+        .from('jobs')
+        .select('*')
+}   
