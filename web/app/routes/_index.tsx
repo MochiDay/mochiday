@@ -1,4 +1,9 @@
-import type { MetaFunction } from "@remix-run/cloudflare";
+import { getAuth } from "@clerk/remix/ssr.server";
+import {
+  redirect,
+  type LoaderFunction,
+  type MetaFunction,
+} from "@remix-run/cloudflare";
 
 export const meta: MetaFunction = () => {
   return [
@@ -8,6 +13,15 @@ export const meta: MetaFunction = () => {
       content: "Reclaim your life.",
     },
   ];
+};
+
+export const loader: LoaderFunction = async (args) => {
+  const { userId, sessionClaims } = await getAuth(args);
+
+  if (userId && !sessionClaims?.metadata?.onboardingComplete) {
+    return redirect("/onboarding");
+  }
+  return {};
 };
 
 export default function Index() {
