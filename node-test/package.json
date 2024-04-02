@@ -20,6 +20,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.40.0",
     "dotenv": "^16.4.5",
+    "fingerprint-injector": "^2.1.50",
     "ghost-cursor": "^1.2.0",
     "node-downloader-helper": "^2.1.9",
     "puppeteer": "^22.6.1",
