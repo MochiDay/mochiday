@@ -1,4 +1,5 @@
 import { Engine } from "../../types/shared.js";
+import { fillLeverBasicQuestions } from "./lib/fillLeverBasicQuestions.js";
 import { fillLeverCustomQuestions } from "./lib/fillLeverCustomQuestions.js";
 import { uploadResumeToLever } from "./lib/uploadResumeToLever.js";
 
@@ -9,6 +10,6 @@ export const fillLeverApplication = async (
   resumePath: string
 ) => {
   await uploadResumeToLever(engine, resumePath);
-  // await answerLeverBasicQuestions(engine);
+  await fillLeverBasicQuestions(engine);
   await fillLeverCustomQuestions(engine);
 };

@@ -34,6 +34,33 @@ export const leverInputHandlers = (
   };
 };
 
+export const handleBasicInputWithOverwrite = async (
+  engine: Engine,
+  selector: string,
+  targetAnswer: string
+) => {
+  const inputValue = await engine.page.$eval(selector, (el: any) => el.value);
+  if (inputValue) {
+    await engine.cursor.click(selector);
+    await engine.page.keyboard.down("Control");
+    await sleep(50 + Math.random() * 10);
+    await engine.page.keyboard.press("A");
+    await sleep(50 + Math.random() * 100);
+    await engine.page.keyboard.up("Control");
+    await sleep(50 + Math.random() * 200);
+    await engine.page.keyboard.press("Backspace");
+  }
+
+  await sleep(100 + Math.random() * 200);
+  await engine.page.type(selector, targetAnswer);
+  await sleep(150 + Math.random() * 100);
+  await engine.page.evaluate(() => {
+    // @ts-ignore
+    window.scrollBy(0, 50 + Math.random() * 100);
+  });
+  console.log(`✅ Filled basic question: ${selector}`);
+};
+
 const handleDropdown = async (
   engine: Engine,
   field: LeverCustomQuestionField,

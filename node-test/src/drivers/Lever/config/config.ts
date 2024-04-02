@@ -21,6 +21,55 @@ export const LeverConfig = {
       `❌ Error answering question: ${question}`,
     unableToFillRequiredQuestion: "❌ Unable to fill required question",
   },
+  basicQuestionInputSelectors: [
+    {
+      selector: 'input[name="name"]',
+      isProvided: (candidate: any) =>
+        candidate.first_name && candidate.last_name,
+      targetAnswer: (candidate: any) =>
+        `${candidate.first_name} ${candidate.last_name}`,
+    },
+    {
+      selector: 'input[name="email"]',
+      isProvided: (candidate: any) => !!candidate.email,
+      targetAnswer: (candidate: any) => candidate.email,
+    },
+    {
+      selector: 'input[name="phone"]',
+      isProvided: (candidate: any) => candidate.phone,
+      targetAnswer: (candidate: any) => candidate.phone,
+    },
+    {
+      selector: 'input[name="org"]',
+      isProvided: (candidate: any) => !!candidate.current_company,
+      targetAnswer: (candidate: any) => candidate.current_company,
+    },
+    {
+      selector: 'input[name="urls[LinkedIn]',
+      isProvided: (candidate: any) => !!candidate.linkedin_url,
+      targetAnswer: (candidate: any) => candidate.linkedin_url,
+    },
+    {
+      selector: 'input[name="urls[GitHub]',
+      isProvided: (candidate: any) => !!candidate.github_url,
+      targetAnswer: (candidate: any) => candidate.github_url,
+    },
+    {
+      selector: 'input[name="urls[Twitter]',
+      isProvided: (candidate: any) => false,
+      targetAnswer: (candidate: any) => "",
+    },
+    {
+      selector: 'input[name="urls[Portfolio]',
+      isProvided: (candidate: any) => !!candidate.website_url,
+      targetAnswer: (candidate: any) => candidate.website_url,
+    },
+    {
+      selector: 'input[name="urls[Other]',
+      isProvided: (candidate: any) => !!candidate.website_url,
+      targetAnswer: (candidate: any) => candidate.website_url,
+    },
+  ],
   questionKewordsByQuestionType: [
     {
       type: LeverQuestionTypes.ELIGIBILITY,
