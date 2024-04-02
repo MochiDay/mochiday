@@ -54,7 +54,6 @@ const handleCustomQuestion = async (
     targetAnswer,
   } of LeverConfig.questionKewordsByQuestionType) {
     if (checkKeywordExist(field.text, keywords)) {
-      answered = true;
       await answerQuestion(
         engine,
         cardId,
@@ -62,6 +61,7 @@ const handleCustomQuestion = async (
         field,
         targetAnswer(engine.candidate)
       );
+      answered = true;
     }
   }
 
