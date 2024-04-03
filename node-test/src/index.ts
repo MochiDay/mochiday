@@ -63,10 +63,11 @@ export async function main() {
   let jobs = await getAllJobs();
   if (!jobs.data) return;
 
-  for (const job of jobs.data.slice(0, 4)) {
+  for (const job of jobs.data.slice(5, 20)) {
     let engine;
     try {
-      engine = await init(JobBoardDriver.LEVER, candidate, job, true);
+      console.log("Applying to job: ", job.company, job.job_url);
+      engine = await init(JobBoardDriver.LEVER, candidate, job, true, true);
       await apply(engine);
     } catch (error) {
       console.error(error);

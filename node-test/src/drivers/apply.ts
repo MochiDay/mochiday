@@ -3,6 +3,7 @@ import { downloadResume } from "../utils/resume.js";
 import { fillLeverApplication } from "./Lever/fillLeverApplication.js";
 import fs from "fs";
 import { submitLeverApplication } from "./Lever/submitLeverApplication.js";
+import { LeverFillQuestionError } from "./Lever/types/types.js";
 
 /**
  * Apply to job using the given engine
@@ -20,7 +21,14 @@ export const apply = async (engine: Engine) => {
     await fillApplication(engine, resumePath);
     await submitApplication(engine);
   } catch (error) {
-    console.error(`❌ Error applying to job ${engine.job.job_url}`, error);
+    if (resumePath && fs.existsSync(resumePath)) {
+      fs.unlinkSync(resumePath);
+    }
+    console.error(`❌ Error applying to job ${engine.job.job_url}`);
+
+    if (error instanceof LeverFillQuestionError) {
+      console.error(`😵‍💫😵‍💫😵‍💫 User action required`);
+    }
     throw error;
   }
   if (resumePath && fs.existsSync(resumePath)) {

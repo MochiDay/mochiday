@@ -6,18 +6,14 @@ export const submitLeverApplication = async (engine: Engine) => {
 
   const selector = LeverConfig.selectors.submitApplicationButtonSelector;
   await engine.page.waitForSelector(selector);
-  await engine.cursor.click(selector, {
-    moveDelay: 80 + Math.random() * 100,
-  });
 
+  // await engine.cursor.click(selector);
   const screenshot = engine.job.company + "-screenshot.png";
 
   await Promise.all([
     engine.cursor.click(selector).then(async () => {
       if (engine.debug) await engine.page.screenshot({ path: screenshot });
-      console.log("Clicked the submit button");
     }),
-
     engine.page
       .waitForResponse(
         (response: { url: () => string }) =>

@@ -9,7 +9,7 @@ export async function downloadResume(candidate: any) {
 
   const url = candidate.resume_link;
   const filename = url.split("/").pop();
-  const userResumeDirectory = join(DirName, candidate.id);
+  const userResumeDirectory = join(DirName, candidate.user_id);
   const filePath = join(userResumeDirectory, filename);
 
   if (!fs.existsSync(userResumeDirectory)) {

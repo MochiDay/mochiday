@@ -1,4 +1,4 @@
-import { createCursor } from "ghost-cursor";
+import { createCursor, getRandomPagePoint } from "ghost-cursor";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import UserAgent from "user-agents";
@@ -61,7 +61,7 @@ export const init = async (
         req.continue();
       }
     });
-    const cursor = createCursor(page);
+    const cursor = createCursor(page, await getRandomPagePoint(page));
 
     await page.setDefaultNavigationTimeout(0);
     await goToLinkWithRetry(page, job.job_url);

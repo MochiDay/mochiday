@@ -6,7 +6,7 @@ export const LeverConfig = {
   },
   selectors: {
     resumeUploaderSelector: 'input[id="resume-upload-input"]',
-    submitApplicationButtonSelector: 'button[type="submit"]',
+    submitApplicationButtonSelector: 'button[id="btn-submit"]',
     customQuestionsSectionsSelector:
       'input[name^="cards"][name$="][baseTemplate]"]',
   },
@@ -45,27 +45,27 @@ export const LeverConfig = {
       targetAnswer: (candidate: any) => candidate.current_company,
     },
     {
-      selector: 'input[name="urls[LinkedIn]',
+      selector: 'input[name="urls[LinkedIn]"]',
       isProvided: (candidate: any) => !!candidate.linkedin_url,
       targetAnswer: (candidate: any) => candidate.linkedin_url,
     },
     {
-      selector: 'input[name="urls[GitHub]',
+      selector: 'input[name="urls[GitHub]"]',
       isProvided: (candidate: any) => !!candidate.github_url,
       targetAnswer: (candidate: any) => candidate.github_url,
     },
     {
-      selector: 'input[name="urls[Twitter]',
+      selector: 'input[name="urls[Twitter]"]',
       isProvided: (candidate: any) => false,
       targetAnswer: (candidate: any) => "",
     },
     {
-      selector: 'input[name="urls[Portfolio]',
+      selector: 'input[name="urls[Portfolio]"]',
       isProvided: (candidate: any) => !!candidate.website_url,
       targetAnswer: (candidate: any) => candidate.website_url,
     },
     {
-      selector: 'input[name="urls[Other]',
+      selector: 'input[name="urls[Other]"]',
       isProvided: (candidate: any) => !!candidate.website_url,
       targetAnswer: (candidate: any) => candidate.website_url,
     },
@@ -92,8 +92,15 @@ export const LeverConfig = {
     },
     {
       type: LeverQuestionTypes.ACKNOWLEDGEMENT,
-      keywords: ["i acknowledge"],
-      targetAnswer: (candidate: any) => "i ack",
+      keywords: ["i acknowledge", "privacy policy", "acknowledge"],
+      targetAnswer: (candidate: any) => [
+        "ack",
+        "agree",
+        "accept",
+        "confirm",
+        "yes",
+      ],
+      multipleAnswers: ["i ack", "i agree"],
     },
     {
       type: LeverQuestionTypes.COMPENSATION,

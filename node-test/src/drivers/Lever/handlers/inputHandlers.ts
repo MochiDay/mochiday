@@ -3,7 +3,7 @@ import {
   LeverCustomQuestionField,
   LeverFillQuestionError,
 } from "../types/types.js";
-import { sleep } from "../../../utils/general.js";
+import { checkKeywordExist, sleep } from "../../../utils/general.js";
 import { Engine } from "../../../types/shared.js";
 
 export const leverInputHandlers = (
@@ -11,23 +11,23 @@ export const leverInputHandlers = (
   field: LeverCustomQuestionField,
   cardId: string,
   fieldId: string,
-  targetAnswer: string,
+  targetAnswer: string | string[],
   multipleAnswers?: string[]
 ) => {
   return {
     handleDropdown: async () =>
       await handleDropdown(engine, field, targetAnswer, cardId, fieldId),
     handleTextArea: async () =>
-      await handleTextArea(engine, cardId, fieldId, targetAnswer),
+      await handleTextArea(engine, cardId, fieldId, targetAnswer as string),
     handleText: async () =>
-      await handleText(engine, cardId, fieldId, targetAnswer),
+      await handleText(engine, cardId, fieldId, targetAnswer as string),
     handleMultipleSelect: async () =>
       await handleMultipleSelect(
         engine,
         cardId,
         fieldId,
         field,
-        multipleAnswers ?? []
+        multipleAnswers
       ),
     handleMultipleChoice: async () =>
       await handleMultipleChoice(engine, cardId, fieldId, field, targetAnswer),
@@ -39,16 +39,13 @@ export const handleBasicInputWithOverwrite = async (
   selector: string,
   targetAnswer: string
 ) => {
-  const inputValue = await engine.page.$eval(selector, (el: any) => el.value);
-  if (inputValue) {
+  const input = await engine.page.$(selector);
+
+  if (input) {
     await engine.cursor.click(selector);
-    await engine.page.keyboard.down("Control");
-    await sleep(50 + Math.random() * 10);
-    await engine.page.keyboard.press("A");
-    await sleep(50 + Math.random() * 100);
-    await engine.page.keyboard.up("Control");
-    await sleep(50 + Math.random() * 200);
-    await engine.page.keyboard.press("Backspace");
+    await sleep(50 + Math.random() * 50);
+    await input.click({ clickCount: 3, delay: 50 + Math.random() * 30 });
+    await input.press("Backspace");
   }
 
   await sleep(100 + Math.random() * 200);
@@ -64,12 +61,15 @@ export const handleBasicInputWithOverwrite = async (
 const handleDropdown = async (
   engine: Engine,
   field: LeverCustomQuestionField,
-  targetAnswer: string,
+  targetAnswer: string | string[],
   cardId: string,
   fieldId: string
 ) => {
-  const optionTextThatMatches = field.options?.find(
-    (option) => option.text.toLowerCase() === targetAnswer.toLowerCase()
+  const isArray = Array.isArray(targetAnswer);
+  const optionTextThatMatches = field.options?.find((option) =>
+    isArray
+      ? checkKeywordExist(option.text.toLowerCase(), targetAnswer)
+      : option.text.toLowerCase().includes(targetAnswer.toLowerCase())
   );
   const dropdownSelector = `select[name="cards[${cardId}][${fieldId}]"]`;
   if (optionTextThatMatches) {
@@ -115,25 +115,36 @@ const handleMultipleSelect = async (
   cardId: string,
   fieldId: string,
   field: LeverCustomQuestionField,
-  multipleAnswers: string[]
+  multipleAnswers?: string[]
 ) => {
   if (multipleAnswers) {
+    let answeredIds: string[] = [];
     for (const answer of multipleAnswers) {
-      const optionTextThatMatches = field.options?.find(
-        (option) => option.text.toLowerCase() === answer.toLowerCase()
-      );
+      const optionTextThatMatches = field.options?.find((option) => {
+        return (
+          option.text.toLowerCase().includes(answer.toLowerCase()) &&
+          !answeredIds.includes(option.optionId)
+        );
+      });
       if (optionTextThatMatches) {
-        const checkBoxSelector = `input[type="checkbox"][value="${optionTextThatMatches.optionId}"][name="cards[${cardId}][responses][${fieldId}]"]`;
+        const checkBoxSelectorMultiple = `input[type="checkbox"][value="${optionTextThatMatches.text}"][name="cards[${cardId}][responses][${fieldId}]"]`;
+        const checkBoxSelectorSingle = `input[type="checkbox"][value="${optionTextThatMatches.text}"][name="cards[${cardId}][${fieldId}]"]`;
+
+        const checkBoxSelector = (await engine.page.$(checkBoxSelectorMultiple))
+          ? checkBoxSelectorMultiple
+          : checkBoxSelectorSingle;
+
         await sleep(50 + Math.random() * 100);
-        await engine.cursor.move(checkBoxSelector, {
+        await engine.cursor.click(checkBoxSelector, {
           moveDelay: 200 + Math.random() * 100,
         });
-        await engine.page.click(checkBoxSelector);
-      } else {
-        throw new LeverFillQuestionError(
-          LeverConfig.leverFillQuestionErrors.optionNotFound(field.text)
-        );
+        answeredIds.push(optionTextThatMatches.optionId);
       }
+    }
+    if (answeredIds.length === 0) {
+      throw new LeverFillQuestionError(
+        LeverConfig.leverFillQuestionErrors.optionNotFound(field.text)
+      );
     }
   } else {
     throw new LeverFillQuestionError(
@@ -147,13 +158,16 @@ const handleMultipleChoice = async (
   cardId: string,
   fieldId: string,
   field: LeverCustomQuestionField,
-  targetAnswer: string
+  targetAnswer: string | string[]
 ) => {
-  const multipleChoiceTextThatMatches = field.options?.find(
-    (option) => option.text.toLowerCase() === targetAnswer.toLowerCase()
+  const isArray = Array.isArray(targetAnswer);
+  const multipleChoiceTextThatMatches = field.options?.find((option) =>
+    isArray
+      ? checkKeywordExist(option.text.toLowerCase(), targetAnswer)
+      : option.text.toLowerCase().includes(targetAnswer.toLowerCase())
   );
   if (multipleChoiceTextThatMatches) {
-    const radioSelector = `input[type="radio"][value="${multipleChoiceTextThatMatches.optionId}"][name="cards[${cardId}][responses][${fieldId}]"]`;
+    const radioSelector = `input[type="radio"][value="${multipleChoiceTextThatMatches.text}"][name="cards[${cardId}][${fieldId}]"]`;
     await engine.cursor.click(radioSelector, {
       moveDelay: 200 + Math.random() * 100,
     });
