@@ -5,8 +5,16 @@ import { GoogleAuth } from "google-auth-library";
 import { JSONClient } from "google-auth-library/build/src/auth/googleauth";
 import { initializeApp } from "firebase-admin/app";
 import { getFunctions } from "firebase-admin/functions";
+import { getJobDetails, getUserDetails } from "./database/supabase";
+import { init } from "./drivers/init";
+import { JobBoardDriver } from "./types/shared";
+import { apply } from "./drivers/apply";
 
-initializeApp();
+initializeApp({
+  projectId: "mochiday-1",
+  serviceAccountId:
+    "firebase-adminsdk-sm19r@mochiday-1.iam.gserviceaccount.com",
+});
 
 const COMMON_QUEUE = "applyJobTask";
 const JSON_FIELD_JOB_URLS = "job_urls";
@@ -74,7 +82,18 @@ export const applyJobTask = onTaskDispatched(
     }
 
     logger.info(`Applying job for user ${userId} at ${jobUrl}`);
-    // TODO: Implement the job application logic here
+    let engine;
+    try {
+      const candidate = await getUserDetails(userId);
+      const job = await getJobDetails(jobUrl);
+      engine = await init(JobBoardDriver.LEVER, candidate, job, true, false);
+      await apply(engine);
+    } catch (error) {
+      logger.error(`Error applying job for user ${userId} at ${jobUrl}`, error);
+      throw new HttpsError("unknown", "Error applying job");
+    } finally {
+      await engine?.browser.close();
+    }
   }
 );
 
