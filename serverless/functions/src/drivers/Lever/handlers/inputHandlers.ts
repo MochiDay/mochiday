@@ -45,8 +45,9 @@ export const handleBasicInputWithOverwrite = async (
 
   if (input) {
     await engine.cursor.click(selector);
-    await sleep(50 + Math.random() * 50);
+    await sleep(50 + Math.random() * 100);
     await input.click({ clickCount: 3, delay: 50 + Math.random() * 30 });
+    await sleep(50 + Math.random() * 100);
     await input.press("Backspace");
   }
 

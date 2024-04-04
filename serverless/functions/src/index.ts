@@ -59,6 +59,9 @@ export const enqueueJobsForUser = onRequest(
 // ----------------------- Task Functions -----------------------
 export const applyJobTask = onTaskDispatched(
   {
+    memory: "4GiB",
+    cpu: 2,
+    timeoutSeconds: 5 * 60,
     retryConfig: {
       maxAttempts: 1,
       minBackoffSeconds: 10,
@@ -86,7 +89,7 @@ export const applyJobTask = onTaskDispatched(
     try {
       const candidate = await getUserDetails(userId);
       const job = await getJobDetails(jobUrl);
-      engine = await init(JobBoardDriver.LEVER, candidate, job, true, false);
+      engine = await init(JobBoardDriver.LEVER, candidate, job, true, true);
       await apply(engine);
     } catch (error) {
       logger.error(`Error applying job for user ${userId} at ${jobUrl}`, error);

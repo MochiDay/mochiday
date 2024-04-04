@@ -5,7 +5,11 @@ import {
 } from "../types/types.js";
 
 import { leverInputHandlers } from "../handlers/inputHandlers.js";
-import { checkKeywordExist } from "../../../utils/general.js";
+import {
+  checkKeywordExist,
+  shuffleArray,
+  sleep,
+} from "../../../utils/general.js";
 import { Engine } from "../../../types/shared.js";
 
 export async function fillLeverCustomQuestions(engine: Engine) {
@@ -16,8 +20,13 @@ export async function fillLeverCustomQuestions(engine: Engine) {
   );
 
   if (!customQuestionsSections) return;
-
-  for (const customQuestionsSection of customQuestionsSections) {
+  const indicesArray = Array.from(
+    { length: customQuestionsSections.length },
+    (_, i) => i
+  );
+  shuffleArray(indicesArray);
+  for (const i of indicesArray) {
+    const customQuestionsSection = customQuestionsSections[i];
     const customQuestionsSectionValue = await engine.page.evaluate(
       // @ts-expect-error Property 'value' does not exist on type 'Element'
       (element: { value: any }) => element.value,
@@ -31,13 +40,20 @@ export async function fillLeverCustomQuestions(engine: Engine) {
       customQuestionsSectionValue
     );
     const { fields, id } = ustomQuestionsSectionParsedData;
-    for (let index = 0; index < fields.length; index++) {
-      const field = fields[index];
+
+    const fieldsIdArray = Array.from({ length: fields.length }, (_, i) => i);
+    shuffleArray(fieldsIdArray);
+
+    for (const i of fieldsIdArray) {
+      const field = fields[i];
       if (field.required) {
         console.log(`Filling required question: ${field.text}`);
-        await handleCustomQuestion(engine, id, index, field);
+        await handleCustomQuestion(engine, id, i, field);
       }
+      await sleep(1000 + Math.random() * 1500);
     }
+
+    await sleep(500 + Math.random() * 1000);
   }
 
   console.log("✅ All custom questions answered");
