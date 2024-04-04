@@ -1,16 +1,18 @@
 import { Link } from "@remix-run/react";
-import { useState } from "react";
-import LeverPlaceHolderImage from "~/img/lever-logo-full.svg";
+import { useContext, useState } from "react";
+import LeverPlaceHolderImage from "~/assets/img/lever-logo-full.svg";
 import { Job, JobRowType } from "~/types/general";
 import {
   IconExternalLink,
   IconGhostFilled,
   IconChecks,
 } from "@tabler/icons-react";
+import { JobApplicationModalContext } from "~/routes/_index";
 
 export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
   const [hovered, setHovered] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { setJob, modalId } = useContext(JobApplicationModalContext);
   return (
     <>
       <div
@@ -86,13 +88,11 @@ export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
             data-tip={
               type === JobRowType.NEW_JOB ? "Magic Apply" : "Manually Apply"
             }
-            onClick={() => {
-              if (type === JobRowType.NEW_JOB && !loading) {
-                setLoading(true);
-                setTimeout(() => {
-                  setLoading(false);
-                }, 2000);
-              }
+            onClick={async () => {
+              // @ts-expect-error Property 'showModal' does not exist on type 'HTMLElement'
+              document.getElementById(modalId).showModal();
+              await new Promise((resolve) => setTimeout(resolve, 200));
+              setJob(job);
             }}
           >
             {loading && type === JobRowType.NEW_JOB && (

@@ -1,6 +1,6 @@
 import { useLocation } from "@remix-run/react";
 import NavItems from "./NavItems";
-import MochiDayLogo from "~/img/logo.svg";
+import MochiDayLogo from "~/assets/img/logo.svg";
 
 export function DashboardNavBar() {
   const location = useLocation();
