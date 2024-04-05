@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import LeverPlaceHolderImage from "~/img/lever-logo-full.svg";
+import LeverPlaceHolderImage from "~/assets/img/lever-logo-full.svg";
 import { Job, JobRowType, JobStatus } from "~/types/general";
 import { IconExternalLink } from "@tabler/icons-react";
 import { JobRow } from "../fresh-jobs/JobRow";

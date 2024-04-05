@@ -1,4 +1,4 @@
-import WoodenLine from "~/img/wooden-line.svg";
+import WoodenLine from "~/assets/img/wooden-line.svg";
 import { IconReload } from "@tabler/icons-react";
 import { SideBarType } from "~/types/general";
 import { AppConfig } from "~/config/config";
