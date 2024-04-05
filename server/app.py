@@ -55,7 +55,10 @@ def perform_task(body):
                 job = {}
                 job["company"] = job_details[0]
                 job["job_title"] = job_details[1]
-                job["image"] = job_details[2]
+                if job_details[2] == "/img/lever-logo-full.svg":
+                    job["image"] = ""
+                else:
+                    job["image"] = job_details[2]
                 job["job_url"] = link
                 job["job_board"] = "Lever"
                 print("Inserting job: ", job)
