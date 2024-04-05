@@ -1,7 +1,8 @@
 from flask import Flask, request, Response
 import logging
-from server.config.queries import COMPREHENSIVE_SOFTWARE_ENGINEER_QUERY
-from server.utils.engine import TBS, JobSite, find_jobs, get_job_details
+from config.queries import COMPREHENSIVE_SOFTWARE_ENGINEER_QUERY
+from utils.database import SupabaseClient
+from utils.engine import TBS, JobSite, find_jobs, get_job_details
 from utils.validator import new_validator
 import os
 from dotenv import load_dotenv
@@ -39,23 +40,28 @@ def mergent_task_handler():
 
 def perform_task(body):
     lever_job_urls = find_jobs(
-        COMPREHENSIVE_SOFTWARE_ENGINEER_QUERY, JobSite.LEVER, TBS.PAST_TWELVE_HOURS
+        COMPREHENSIVE_SOFTWARE_ENGINEER_QUERY, JobSite.LEVER, TBS.PAST_TWELVE_HOURS, 200
     )
-    for link in lever_job_urls:
-        try:
-            job_details = get_job_details(link)
-            if (
-                job_details["company"] == "Not found – 404 error"
-                and job_details["job_title"] == "Unknown"
-            ):
-                continue
-            job = {}
-            job["company"] = job_details[0]
-            job["job_title"] = job_details[1]
-            job["image"] = job_details[2]
-            job["job_url"] = link
-            job["job_board"] = "Lever"
-            print("Inserting job: ", job)
-            # SupabaseClient().insert_job(job)
-        except Exception as e:
-            logging.error(f"Failed to process job: {str(e)}")
+    try:
+        supabase_client = SupabaseClient()
+        for link in lever_job_urls:
+            try:
+                job_details = get_job_details(link)
+                if (
+                    job_details[0] == "Not found – 404 error"
+                    and job_details[1] == "Unknown"
+                ):
+                    continue
+                job = {}
+                job["company"] = job_details[0]
+                job["job_title"] = job_details[1]
+                job["image"] = job_details[2]
+                job["job_url"] = link
+                job["job_board"] = "Lever"
+                print("Inserting job: ", job)
+                supabase_client.insert_job(job)
+            except Exception as e:
+                logging.error(f"Failed to process job: {str(e)}")
+        supabase_client.prune_jobs()
+    except Exception as e:
+        logging.error(f"Failed: {str(e)}")

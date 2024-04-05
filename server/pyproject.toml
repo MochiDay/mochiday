@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "job-search-in-hell"
+name = "mochiday"
 version = "0.1.0"
 description = "God-mode for job search."
 authors = ["Nataliya Karmarkar <nkarmarkar@usfca.edu>", "Xipu Li <xli200@usfca.edu>"]

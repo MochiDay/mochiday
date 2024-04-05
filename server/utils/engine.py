@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from proxy import get_free_proxies
+from utils.proxy import get_free_proxies
 from enum import Enum
 import yagooglesearch
 import re
@@ -67,7 +67,7 @@ def get_job_details(link: str) -> list[str]:
 
     title = soup.title.string if soup.title else "Unknown"
     company_name = title.split("-")[0].strip() if "-" in title else title.strip()
-    position = title.split("-")[1:]
+    position = "-".join(title.split("-")[1:]).strip() if "-" in title else "Unknown"
 
     img = soup.find("img")
     if img and img != "/img/lever-logo-full.svg":
