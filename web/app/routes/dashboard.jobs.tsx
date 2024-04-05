@@ -6,7 +6,11 @@ import { Job, SideBarType } from "~/types/general";
 
 export const loader: LoaderFunction = async ({ context }) => {
   const supabase = context.supabase();
-  const result = await supabase.from("jobs").select("*").limit(20);
+  const result = await supabase
+    .from("jobs")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .range(0, 19);
   return json(result.data);
 };
 

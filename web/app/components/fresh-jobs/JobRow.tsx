@@ -33,7 +33,7 @@ export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
           <div className="ml-6">
             {/* check if is less than 24 hrs ago */}
             {new Date(job.created_at).getTime() > Date.now() - 86400000 && (
-              <div className="badge bg-red-500 text-white py-2 badge-sm text-xs font-bold">
+              <div className="badge bg-red text-white py-2 badge-sm text-xs font-bold">
                 Very Fresh
               </div>
             )}
