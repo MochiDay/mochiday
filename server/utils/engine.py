@@ -17,6 +17,7 @@ class JobSite(Enum):
 
 
 class TBS(Enum):
+    PAST_TWELVE_HOURS = "qdr:h12"
     PAST_DAY = "qdr:d"
     PAST_WEEK = "qdr:w"
     PAST_MONTH = "qdr:m"
@@ -60,20 +61,19 @@ def find_jobs(
     return cleaner.clean(result)
 
 
-# TODO : Add a location to the return value of get_job_details
 def get_job_details(link: str) -> list[str]:
     response = requests.get(link)
     soup = BeautifulSoup(response.content, "html.parser")
 
     title = soup.title.string if soup.title else "Unknown"
     company_name = title.split("-")[0].strip() if "-" in title else title.strip()
-    position = title.split("-")[1].strip() if "-" in title else "Unknown"
+    position = title.split("-")[1:]
 
-    img = soup.find("img") 
-    if img:
+    img = soup.find("img")
+    if img and img != "/img/lever-logo-full.svg":
         img_url = img["src"]
     else:
-        img_url = None 
+        img_url = None
 
     return [company_name, position, img_url]
 
