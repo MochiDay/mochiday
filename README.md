@@ -3,6 +3,13 @@
 
 ---
 
+# MochiDay
+
+Spend less time finding jobs and more time applying to them.
+
+## Visit
+
+[https://mochiday.co](https://mochiday.co)
 
 Get started by filling out the environment variables in the `.env` file.
 You can copy the `.env.example` file and fill in the values:
