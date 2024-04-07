@@ -2,7 +2,7 @@ from flask import Flask, request, Response
 import logging
 from config.queries import COMPREHENSIVE_SOFTWARE_ENGINEER_QUERY
 from utils.database import SupabaseClient
-from utils.engine import TBS, JobSite, find_jobs, get_job_details
+from utils.engine import TBS, JobSite, find_jobs, get_lever_job_details
 from utils.validator import new_validator
 import os
 from dotenv import load_dotenv
@@ -46,7 +46,7 @@ def perform_task(body):
         supabase_client = SupabaseClient()
         for link in lever_job_urls:
             try:
-                job_details = get_job_details(link)
+                job_details = get_lever_job_details(link)
                 if (
                     job_details[0] == "Not found – 404 error"
                     and job_details[1] == "Unknown"
@@ -55,10 +55,7 @@ def perform_task(body):
                 job = {}
                 job["company"] = job_details[0]
                 job["job_title"] = job_details[1]
-                if job_details[2] == "/img/lever-logo-full.svg":
-                    job["image"] = ""
-                else:
-                    job["image"] = job_details[2]
+                job["image"] = job_details[2]
                 job["job_url"] = link
                 job["job_board"] = "Lever"
                 print("Inserting job: ", job)
