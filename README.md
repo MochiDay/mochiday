@@ -9,7 +9,7 @@ Spend less time finding jobs and more time applying to them.
 
 ## Visit
 
-[https://mochiday.co](https://mochiday.co)
+[https://mochiday.co/dashboard/jobs](https://mochiday.co/dashboard/jobs)
 
 Get started by filling out the environment variables in the `.env` file.
 You can copy the `.env.example` file and fill in the values:
