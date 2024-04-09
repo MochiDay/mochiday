@@ -15,7 +15,7 @@ export function JobsPanel({
     <div className="flex flex-col items-center">
       <div
         // two columns
-        className="grid md:grid-cols-2 lg:grid-cols-2 gap-4 px-2  pr-10 2xl:pr-0 pb-10 grid-cols-1"
+        className="grid grid:cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 px-2  md:pr-10 2xl:pr-0 pb-10 grid-cols-1"
         style={{ scrollbarWidth: "none" }}
       >
         {jobs.map((job) => (
