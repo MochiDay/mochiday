@@ -1,4 +1,4 @@
-COMPREHENSIVE_SOFTWARE_ENGINEER_QUERY = """site:lever.co (software OR
+COMPREHENSIVE_SOFTWARE_ENGINEER_QUERY = """(software OR
                                         "full stack" OR frontend OR
                                         backend OR "software developer"
                                         OR "web developer" OR

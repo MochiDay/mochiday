@@ -68,7 +68,7 @@ def get_lever_job_details(link: str) -> list[str]:
     title = soup.title.string if soup.title else "Unknown"
     company_name = title.split("-")[0].strip() if "-" in title else title.strip()
     position = "-".join(title.split("-")[1:]).strip() if "-" in title else "Unknown"
-    if "engineer" or "developer" not in position.lower():
+    if ("engineer" or "developer") not in position.lower():
         return ["Not found – 404 error", "Unknown", None]
 
     img = soup.find("img")
