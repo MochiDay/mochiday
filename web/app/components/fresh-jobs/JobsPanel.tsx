@@ -24,18 +24,18 @@ export function JobsPanel({
       </div>
       <div className="join flex justify-center items-center pb-20">
         {pageNumber !== 1 && (
-          <Link to={`/dashboard/jobs?page=${pageNumber - 1}`}>
-            <button className="join-item btn bg-yellow border-yellow hover:bg-yellow hover:opacity-55 hover:border-none">
+          <Link to={`/dashboard/jobs?page=${pageNumber - 1}`} prefetch="intent">
+            <button className="join-item btn bg-yellow border-yellow hover:bg-yellow hover:opacity-55">
               «
             </button>
           </Link>
         )}
-        <button className="join-item btn border-pink bg-pink hover:bg-pink hover:opacity-75 hover:border-none">
+        <button className="join-item btn border-pink bg-pink hover:bg-pink hover:opacity-75">
           Page {pageNumber}
         </button>
         {pageNumber < pagesRequired && (
-          <Link to={`/dashboard/jobs?page=${pageNumber + 1}`}>
-            <button className="join-item btn  bg-yellow border-yellow hover:bg-yellow hover:opacity-55 hover:border-none">
+          <Link to={`/dashboard/jobs?page=${pageNumber + 1}`} prefetch="intent">
+            <button className="join-item btn bg-yellow border-yellow hover:bg-yellow hover:opacity-55">
               »
             </button>
           </Link>

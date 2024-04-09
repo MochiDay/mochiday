@@ -7,7 +7,7 @@ import {
   IconGhostFilled,
   IconChecks,
 } from "@tabler/icons-react";
-import { JobApplicationModalContext } from "~/routes/_index";
+import { JobApplicationModalContext } from "./modals/JobApplicationModal";
 
 export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
   const [hovered, setHovered] = useState(false);
@@ -85,9 +85,7 @@ export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
             className={`w-20 ${
               type === JobRowType.ACTION_REQUIRED ? "bg-warning" : "bg-success"
             }  hover:bg-opacity-80 flex flex-col justify-center items-center h-full tooltip tooltip-left hover:cursor-pointer active:bg-opacity-100`}
-            data-tip={
-              type === JobRowType.NEW_JOB ? "Magic Apply" : "Manually Apply"
-            }
+            data-tip={type === JobRowType.NEW_JOB ? "Apply" : "Manually Apply"}
             onClick={async () => {
               // @ts-expect-error Property 'showModal' does not exist on type 'HTMLElement'
               document.getElementById(modalId).showModal();
