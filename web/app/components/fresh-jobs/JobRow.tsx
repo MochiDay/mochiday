@@ -23,11 +23,11 @@ export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
         onMouseLeave={() => setHovered(false)}
       >
         <div className="flex p-2 flex-row justify-start items-center w-full">
-          <div className="flex flex-col justify-center items-center ml-2 w-16 h-16">
+          <div className="flex flex-col justify-center items-center ml-2">
             <img
               src={job.image ?? LeverPlaceHolderImage}
               alt={job.company}
-              className=" object-contain"
+              className="w-10 md:w-16 object-contain"
             />
           </div>
           <div className="ml-6">
@@ -97,8 +97,20 @@ export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
               <span className="loading loading-spinner loading-md text-white" />
             )}
 
+            {!loading && type === JobRowType.NEW_JOB && (
+              <IconGhostFilled
+                size={40}
+                color="white"
+                className="block md:hidden"
+              />
+            )}
+
             {hovered && !loading && type === JobRowType.NEW_JOB && (
-              <IconGhostFilled size={40} color="white" />
+              <IconGhostFilled
+                size={40}
+                color="white"
+                className="hidden md:block"
+              />
             )}
             {hovered && type === JobRowType.ACTION_REQUIRED && (
               <Link to={job.job_url} target="_blank" rel="noreferrer">

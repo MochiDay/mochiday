@@ -1,4 +1,5 @@
 import { type MetaFunction } from "@remix-run/cloudflare";
+import { Link } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -24,9 +25,11 @@ export default function Index() {
           </h2>
         </div>
         <div className="flex flex-row w-full justify-end">
-          <button className="btn md:btn-lg bg-black text-white mb-10">
-            Get Started
-          </button>
+          <Link to="/dashboard/jobs" prefetch="intent">
+            <button className="btn md:btn-lg bg-black text-white mb-10">
+              Get Started
+            </button>
+          </Link>
         </div>
       </div>
     </div>
