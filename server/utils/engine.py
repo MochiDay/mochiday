@@ -72,7 +72,7 @@ def get_lever_job_details(link: str) -> list[str]:
         return ["Not found – 404 error", "Unknown", None]
 
     img = soup.find("img")
-    if img and img != "/img/lever-logo-full.svg":
+    if img and img["src"] and img["src"] != "/img/lever-logo-full.svg":
         img_url = img["src"]
     else:
         img_url = None
