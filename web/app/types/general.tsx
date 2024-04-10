@@ -34,3 +34,7 @@ export enum JobRowType {
   NEW_JOB = "new_job",
   ACTION_REQUIRED = "action_required",
 }
+
+export type JobExtended = Job & {
+  applied: boolean;
+};

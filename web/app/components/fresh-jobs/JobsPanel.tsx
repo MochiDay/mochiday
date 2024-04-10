@@ -1,4 +1,4 @@
-import { Job, JobRowType } from "~/types/general";
+import { JobExtended, JobRowType } from "~/types/general";
 import { JobRow } from "./JobRow";
 import { Link } from "@remix-run/react";
 
@@ -7,7 +7,7 @@ export function JobsPanel({
   pageNumber,
   pagesRequired,
 }: {
-  jobs: Job[];
+  jobs: JobExtended[];
   pageNumber: number;
   pagesRequired: number;
 }) {

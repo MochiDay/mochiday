@@ -2,8 +2,6 @@ import {
   IconHome,
   IconHomeFilled,
   IconStack,
-  IconSettings,
-  IconSettingsFilled,
   IconStackFilled,
 } from "@tabler/icons-react";
 import { Config, JobStatus, SideBarType } from "~/types/general";
@@ -52,11 +50,11 @@ export const AppConfig: Config = {
       activeIcon: <IconStackFilled />,
       link: "/dashboard/applications",
     },
-    {
-      name: "Settings",
-      icon: <IconSettings />,
-      activeIcon: <IconSettingsFilled />,
-      link: "/dashboard/settings",
-    },
+    // {
+    //   name: "Settings",
+    //   icon: <IconSettings />,
+    //   activeIcon: <IconSettingsFilled />,
+    //   link: "/dashboard/settings",
+    // },
   ],
 };

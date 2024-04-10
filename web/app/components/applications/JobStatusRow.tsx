@@ -1,11 +1,17 @@
 import { Link } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import LeverPlaceHolderImage from "~/assets/img/lever-logo-full.svg";
-import { Job, JobRowType, JobStatus } from "~/types/general";
+import { JobExtended, JobRowType, JobStatus } from "~/types/general";
 import { IconExternalLink } from "@tabler/icons-react";
 import { JobRow } from "../fresh-jobs/JobRow";
 
-export function JobStatusRow({ job, status }: { job: Job; status: JobStatus }) {
+export function JobStatusRow({
+  job,
+  status,
+}: {
+  job: JobExtended;
+  status: JobStatus;
+}) {
   const [hovered, setHovered] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
   useEffect(() => {
@@ -63,13 +69,6 @@ export function JobStatusRow({ job, status }: { job: Job; status: JobStatus }) {
             />
           </div>
           <div className="ml-6">
-            {/* check if is less than 24 hrs ago */}
-            {new Date(job.created_at).getTime() > Date.now() - 86400000 && (
-              <div className="badge bg-red-500 text-white py-2 badge-sm text-xs font-bold">
-                Very Fresh
-              </div>
-            )}
-
             <h2 className="font-black text-lg flex flex-row">
               {job.company}
               {hovered && (

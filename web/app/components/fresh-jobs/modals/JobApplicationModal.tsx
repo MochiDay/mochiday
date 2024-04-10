@@ -1,4 +1,7 @@
+import { useRevalidator } from "@remix-run/react";
 import { createContext, useContext, useRef, useState } from "react";
+import { toast } from "sonner";
+import { useApplication } from "~/hooks/useApplication";
 import { Job } from "~/types/general";
 
 export const JobApplicationModalContext = createContext<{
@@ -11,13 +14,28 @@ export const JobApplicationModalContext = createContext<{
   setJob: () => {},
 });
 
-export const JobApplicationModal = ({ id }: { id: string }) => {
+export const JobApplicationModal = ({
+  id,
+  userId,
+}: {
+  id: string;
+  userId: string | undefined | null;
+}) => {
   const [loaded, setLoaded] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { job, setJob } = useContext(JobApplicationModalContext);
+  const { markAsApplied } = useApplication();
+  const revalidator = useRevalidator();
 
   return (
-    <dialog id={id} className="modal">
+    <dialog
+      id={id}
+      className="modal"
+      onClose={() => {
+        setJob(null);
+        setLoaded(false);
+      }}
+    >
       <div className="modal-box w-11/12 max-w-4xl">
         <form method="dialog">
           {/* if there is a button in form, it will close the modal */}
@@ -45,8 +63,24 @@ export const JobApplicationModal = ({ id }: { id: string }) => {
             width: loaded ? "100%" : "0",
             height: loaded ? "80vh" : "0",
           }}
-          onLoad={(e) => {
-            console.log(e.currentTarget.src);
+          onLoad={async () => {
+            if (job && loaded) {
+              setJob(null);
+              setLoaded(false);
+              // @ts-expect-error Property 'showModal' does not exist on type 'HTMLElement'
+              document.getElementById(id).close();
+              if (!userId) {
+                toast.success("🎉 Applied to job!");
+                toast.info("Sign in to save your progress!", {
+                  duration: 5000,
+                  closeButton: true,
+                });
+              } else {
+                await markAsApplied(job.job_url, userId);
+                revalidator.revalidate();
+              }
+              return;
+            }
             if (job) {
               setLoaded(true);
             }

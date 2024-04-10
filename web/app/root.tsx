@@ -16,6 +16,7 @@ import { ClerkApp } from "@clerk/remix";
 import { getToast } from "remix-toast";
 import { useEffect, useRef } from "react";
 import { Toaster, toast as notify } from "sonner";
+import { neobrutalism } from "@clerk/themes";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -93,4 +94,8 @@ function App() {
   return <Outlet />;
 }
 
-export default ClerkApp(App);
+export default ClerkApp(App, {
+  appearance: {
+    baseTheme: neobrutalism,
+  },
+});

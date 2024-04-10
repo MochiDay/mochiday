@@ -1,4 +1,4 @@
-import { Job, JobStatus } from "~/types/general";
+import { JobExtended, JobStatus } from "~/types/general";
 import { JobStatusRow } from "./JobStatusRow";
 import { AppConfig } from "~/config/config";
 
@@ -6,7 +6,7 @@ export default function JobStatusSection({
   jobs,
   status,
 }: {
-  jobs: Job[];
+  jobs: JobExtended[];
   status: JobStatus;
 }) {
   return (
@@ -21,7 +21,7 @@ export default function JobStatusSection({
           gridTemplateColumns: `repeat(${AppConfig.jobStatusSectionByStatus[status].gridCols},  minmax(0, 1fr))`,
         }}
       >
-        {jobs.slice(0, 3).map((job) => (
+        {jobs.map((job) => (
           <JobStatusRow key={job.id} job={job} status={status} />
         ))}
       </div>

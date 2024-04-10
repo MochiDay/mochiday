@@ -1,22 +1,22 @@
-import { Job, JobStatus } from "~/types/general";
+import { JobExtended, JobStatus } from "~/types/general";
 import JobStatusSection from "./JobStatusSection";
 
-export default function JobStatusBoard({ jobs }: { jobs: Job[] }) {
+export default function JobStatusBoard({ jobs }: { jobs: JobExtended[] }) {
   return (
     <div className="px-2 pr-10 2xl:pr-0 pb-20">
       {/* Action Required */}
-      <div>
+      {/* <div>
         <JobStatusSection jobs={jobs} status={JobStatus.ACTION_REQUIRED} />
-      </div>
+      </div> */}
 
       {/* In Progress */}
-      <div className="mt-10">
+      {/* <div className="mt-10">
         <JobStatusSection jobs={jobs} status={JobStatus.IN_PROGRESS} />
-      </div>
+      </div> */}
 
       {/* Applied */}
-      <div className="mt-10">
-        <JobStatusSection jobs={jobs} status={JobStatus.APPLIED} />
+      <div className="">
+        {<JobStatusSection jobs={jobs} status={JobStatus.APPLIED} />}
       </div>
     </div>
   );

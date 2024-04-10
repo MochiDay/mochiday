@@ -1,15 +1,16 @@
 import { Link } from "@remix-run/react";
 import { useContext, useState } from "react";
 import LeverPlaceHolderImage from "~/assets/img/lever-logo-full.svg";
-import { Job, JobRowType } from "~/types/general";
+import { JobExtended, JobRowType } from "~/types/general";
 import {
   IconExternalLink,
   IconGhostFilled,
   IconChecks,
 } from "@tabler/icons-react";
 import { JobApplicationModalContext } from "./modals/JobApplicationModal";
+import { toast } from "sonner";
 
-export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
+export function JobRow({ job, type }: { job: JobExtended; type: JobRowType }) {
   const [hovered, setHovered] = useState(false);
   const [loading, setLoading] = useState(false);
   const { setJob, modalId } = useContext(JobApplicationModalContext);
@@ -83,10 +84,22 @@ export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
           )}
           <button
             className={`w-20 ${
-              type === JobRowType.ACTION_REQUIRED ? "bg-warning" : "bg-success"
+              type === JobRowType.ACTION_REQUIRED || job.applied
+                ? "bg-warning"
+                : "bg-success"
             }  hover:bg-opacity-80 flex flex-col justify-center items-center h-full tooltip tooltip-left hover:cursor-pointer active:bg-opacity-100`}
-            data-tip={type === JobRowType.NEW_JOB ? "Apply" : "Manually Apply"}
+            data-tip={
+              type === JobRowType.NEW_JOB
+                ? "Apply"
+                : job.applied
+                ? "Applied!"
+                : "Manually Apply"
+            }
             onClick={async () => {
+              if (job.applied) {
+                toast.info("Already applied to this job!", { duration: 1000 });
+                return;
+              }
               // @ts-expect-error Property 'showModal' does not exist on type 'HTMLElement'
               document.getElementById(modalId).showModal();
               await new Promise((resolve) => setTimeout(resolve, 200));
@@ -97,7 +110,7 @@ export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
               <span className="loading loading-spinner loading-md text-white" />
             )}
 
-            {!loading && type === JobRowType.NEW_JOB && (
+            {!loading && type === JobRowType.NEW_JOB && !job.applied && (
               <IconGhostFilled
                 size={40}
                 color="white"
@@ -105,13 +118,18 @@ export function JobRow({ job, type }: { job: Job; type: JobRowType }) {
               />
             )}
 
-            {hovered && !loading && type === JobRowType.NEW_JOB && (
-              <IconGhostFilled
-                size={40}
-                color="white"
-                className="hidden md:block"
-              />
-            )}
+            {job.applied && <IconChecks size={40} color="white" />}
+
+            {hovered &&
+              !loading &&
+              type === JobRowType.NEW_JOB &&
+              !job.applied && (
+                <IconGhostFilled
+                  size={40}
+                  color="white"
+                  className="hidden md:block"
+                />
+              )}
             {hovered && type === JobRowType.ACTION_REQUIRED && (
               <Link to={job.job_url} target="_blank" rel="noreferrer">
                 <IconExternalLink size={40} color="white" />
