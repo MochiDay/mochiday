@@ -30,8 +30,21 @@ export function DashboardNavBar() {
             <button>Sign In</button>
           </Link>
         ) : (
-          <div className="flex flex-row w-full justify-center mb-2">
-            <UserButton afterSignOutUrl="/" />
+          <div className="flex flex-row w-full justify-center mb-2 border-t-2 border-opacity-20 pt-2">
+            <UserButton
+              afterSignOutUrl="/"
+              showName={true}
+              appearance={{
+                elements: {
+                  userButtonBox: {
+                    flexDirection: "row-reverse",
+                  },
+                  userButtonOuterIdentifier: {
+                    paddingLeft: "0rem",
+                  },
+                },
+              }}
+            />
           </div>
         )}
       </div>
