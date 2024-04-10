@@ -28,7 +28,7 @@ export function JobRow({ job, type }: { job: JobExtended; type: JobRowType }) {
             <img
               src={job.image ?? LeverPlaceHolderImage}
               alt={job.company}
-              className="w-10 md:w-16 object-contain"
+              className="w-10 h-10 md:w-16 md:h-16 object-contain"
             />
           </div>
           <div className="ml-6">
