@@ -28,10 +28,19 @@ export const loader: LoaderFunction = async (args) => {
       return {
         ...job,
         applied: true,
+        applied_at:
+          userApplications.data.find((app) => app.job_url === job.job_url)
+            ?.created_at ?? "",
       };
     }) ?? [])
   );
-  return json(response);
+
+  return json(
+    response.sort(
+      (a, b) =>
+        new Date(b.applied_at!).getTime() - new Date(a.applied_at!).getTime()
+    )
+  );
 };
 
 export default function DashboardApplications() {

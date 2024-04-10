@@ -37,4 +37,5 @@ export enum JobRowType {
 
 export type JobExtended = Job & {
   applied: boolean;
+  applied_at?: string;
 };

@@ -22,9 +22,9 @@ export function JobStatusRow({
     return <JobRow job={job} type={JobRowType.ACTION_REQUIRED} />;
   }
   // get time in hh:mma format: like 12:30p or 12:30a
-  const time = new Date(job.created_at)
+  const time = new Date(job.applied_at!)
     .toLocaleString("en-US", {
-      hour: "numeric",
+      hour: "2-digit",
       minute: "2-digit",
       hour12: true,
     })
