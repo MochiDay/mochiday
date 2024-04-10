@@ -4,11 +4,12 @@ from utils.proxy import get_free_proxies
 from enum import Enum
 import yagooglesearch
 import re
+import logging
 
 
 class JobSite(Enum):
     LEVER = "lever.co"
-    GREENHOUSE = "boards.greenhouse.io"
+    GREENHOUSE = "boards.greenhouse.io/*/jobs/*"
     ANGELLIST = "TODO"
     WORKABLE = "TODO"
     INDEED = "TODO"
@@ -25,8 +26,11 @@ class TBS(Enum):
 
 
 def find_jobs(
-    keyword: str, job_site: JobSite, tbs: TBS | None, max_results: int = 100
-) -> list[str]:
+    keyword: str,
+    job_sites: list[JobSite],
+    tbs: TBS | None,
+    max_results: int = 200,
+):
     proxies = [None] + get_free_proxies()
     proxy_index = 0
 
@@ -41,8 +45,8 @@ def find_jobs(
             if proxy_index >= len(proxies):
                 print("No more proxies to try.")
                 break
-
-            search_query = f"{keyword} site:{job_site.value}"
+            search_sites = " OR ".join([f"site:{site.value}" for site in job_sites])
+            search_query = f"{keyword} {search_sites}"
             print(f"Searching for {search_query} using proxy {proxy}")
             client = yagooglesearch.SearchClient(
                 search_query,
@@ -57,8 +61,15 @@ def find_jobs(
         except Exception as e:
             print(f"Error using proxy {proxy}: ", e)
 
-    cleaner = JobSearchResultCleaner(job_site)
-    return cleaner.clean(result)
+    job_urls_by_board = {}
+    for job_site in job_sites:
+        job_urls_for_job_site = [
+            url for url in result if re.search(regex[job_site], url)
+        ]
+        cleaner = JobSearchResultCleaner(job_site)
+        job_urls_by_board[job_site] = cleaner.clean(job_urls_for_job_site)
+
+    return job_urls_by_board
 
 
 def get_lever_job_details(link: str) -> list[str]:
@@ -80,25 +91,78 @@ def get_lever_job_details(link: str) -> list[str]:
     return [company_name, position, img_url]
 
 
+def get_greenhouse_job_details(link: str) -> list[str]:
+    response = requests.get(link)
+    soup = BeautifulSoup(response.content, "html.parser")
+    head = soup.find("head")
+
+    position = (
+        head.find("meta", property="og:title")["content"]
+        if head.find("meta", property="og:title")
+        else "Unknown"
+    )
+
+    image = (
+        head.find("meta", property="og:image")["content"]
+        if head.find("meta", property="og:image")
+        else None
+    )
+
+    if ("engineer" or "developer") not in position.lower():
+        return ["Not found – 404 error", "Unknown", None]
+
+    title = soup.title.string if soup.title else "Unknown"
+
+    company_name = title.split(" at ")[1].strip() if " at " in title else title.strip()
+    return [company_name, position, image]
+
+
+def handle_job_insert(supabase: any, job_urls: list[str], job_site: JobSite):
+    for link in job_urls:
+        try:
+            job_details = []
+            if job_site == JobSite.LEVER:
+                job_details = get_lever_job_details(link)
+            elif job_site == JobSite.GREENHOUSE:
+                job_details = get_greenhouse_job_details(link)
+            if (
+                job_details[0] == "Not found – 404 error"
+                and job_details[1] == "Unknown"
+            ):
+                continue
+            job = {}
+            job["company"] = job_details[0]
+            job["job_title"] = job_details[1]
+            job["image"] = job_details[2]
+            job["job_url"] = link
+            job["job_board"] = job_site.name
+            print("Inserting job: ", job)
+            supabase.insert_job(job)
+        except Exception as e:
+            logging.error(f"Failed to process job: {str(e)}")
+
+
+regex = {
+    JobSite.LEVER: r"https://jobs.lever.co/[^/]+/[^/]+",
+    JobSite.GREENHOUSE: r"https://boards.greenhouse.io/[^/]+/jobs/[^/]+",
+    JobSite.ANGELLIST: "TODO",
+    JobSite.WORKABLE: "TODO",
+    JobSite.INDEED: "TODO",
+    JobSite.GLASSDOOR: "TODO",
+    JobSite.LINKEDIN: "TODO",
+}
+
+
 class JobSearchResultCleaner:
-    regex = {
-        JobSite.LEVER: r"https://jobs.lever.co/[^/]+/[^/]+",
-        JobSite.GREENHOUSE: r"https://boards.greenhouse.io/[^/]+/[^/]+",
-        JobSite.ANGELLIST: "TODO",
-        JobSite.WORKABLE: "TODO",
-        JobSite.INDEED: "TODO",
-        JobSite.GLASSDOOR: "TODO",
-        JobSite.LINKEDIN: "TODO",
-    }
 
     def __init__(self, job_site: JobSite):
         self.job_site = job_site
 
     def _prune_urls(self, urls: list[str]) -> list[str]:
         return [
-            re.search(self.regex[self.job_site], url).group()
+            re.search(regex[self.job_site], url).group()
             for url in urls
-            if re.search(self.regex[self.job_site], url)
+            if re.search(regex[self.job_site], url)
         ]
 
     def _remove_duplicates(self, urls: list[str]) -> list[str]:
@@ -106,9 +170,20 @@ class JobSearchResultCleaner:
 
     def _make_direct_apply_urls(self, urls: list[str]) -> list[str]:
         if self.job_site == JobSite.LEVER:
-            # clean the url of all query parameters
             urls = [re.sub(r"\?.*", "", url) for url in urls]
+            # clean the url of all query parameters
             return [url + "/apply" for url in urls]
+        if self.job_site == JobSite.GREENHOUSE:
+            cleaned_urls = [re.sub(r"\?.*", "", url) for url in urls]
+            urls = [
+                re.sub(
+                    r"https://boards.greenhouse.io/([^/]+)/jobs/([^/]+)",
+                    r"https://boards.greenhouse.io/embed/job_app?for=\1&token=\2",
+                    url,
+                )
+                for url in cleaned_urls
+            ]
+            return urls
         return urls
 
     def clean(self, job_search_result: list) -> list[str]:

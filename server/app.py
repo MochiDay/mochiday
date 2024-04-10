@@ -2,7 +2,12 @@ from flask import Flask, request, Response
 import logging
 from config.queries import COMPREHENSIVE_SOFTWARE_ENGINEER_QUERY
 from utils.database import SupabaseClient
-from utils.engine import TBS, JobSite, find_jobs, get_lever_job_details
+from utils.engine import (
+    TBS,
+    JobSite,
+    find_jobs,
+    handle_job_insert,
+)
 from utils.validator import new_validator
 import os
 from dotenv import load_dotenv
@@ -39,29 +44,16 @@ def mergent_task_handler():
 
 
 def perform_task(body):
-    lever_job_urls = find_jobs(
-        COMPREHENSIVE_SOFTWARE_ENGINEER_QUERY, JobSite.LEVER, TBS.PAST_TWELVE_HOURS, 200
+    job_urls_by_board = find_jobs(
+        COMPREHENSIVE_SOFTWARE_ENGINEER_QUERY,
+        [JobSite.LEVER, JobSite.GREENHOUSE],
+        TBS.PAST_TWELVE_HOURS,
+        200,
     )
     try:
         supabase_client = SupabaseClient()
-        for link in lever_job_urls:
-            try:
-                job_details = get_lever_job_details(link)
-                if (
-                    job_details[0] == "Not found – 404 error"
-                    and job_details[1] == "Unknown"
-                ):
-                    continue
-                job = {}
-                job["company"] = job_details[0]
-                job["job_title"] = job_details[1]
-                job["image"] = job_details[2]
-                job["job_url"] = link
-                job["job_board"] = "Lever"
-                print("Inserting job: ", job)
-                supabase_client.insert_job(job)
-            except Exception as e:
-                logging.error(f"Failed to process job: {str(e)}")
+        for job_board, job_urls in job_urls_by_board.items():
+            handle_job_insert(supabase_client, job_urls, job_board)
         supabase_client.prune_jobs()
     except Exception as e:
         logging.error(f"Failed: {str(e)}")
