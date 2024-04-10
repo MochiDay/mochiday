@@ -1,13 +1,14 @@
 import { getAuth } from "@clerk/remix/ssr.server";
 import { json, LoaderFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
+import { fakeAppliedJobs } from "~/components/applications/FakeAppliedJobs";
 import JobStatusBoard from "~/components/applications/JobStatusBoard";
 import GeneralDashboardLayout from "~/components/GeneralDashboardLayout";
 import { JobExtended, SideBarType } from "~/types/general";
 
 export const loader: LoaderFunction = async (args) => {
   const { userId } = await getAuth(args);
-  if (!userId) return json([]);
+  if (!userId) return json(fakeAppliedJobs);
 
   const supabase = args.context.supabase();
   const userApplications = await supabase
