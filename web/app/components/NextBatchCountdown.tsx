@@ -60,7 +60,10 @@ function NextBatchCountdown() {
     }
   }, [nextUpdate]);
   return (
-    <div className="flex flex-col justify-center items-center mt-10">
+    <div
+      className="flex flex-col justify-center items-center mt-10 tooltip before:text-xs before:max-w-[8rem] before:content-[attr(data-tip)]"
+      data-tip="Takes ~10mins to process once hits 0"
+    >
       <div>
         <h1 className="text-sm font-bold">Next Update In:</h1>
       </div>
