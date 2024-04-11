@@ -39,14 +39,14 @@ export function JobRow({ job, type }: { job: JobExtended; type: JobRowType }) {
                 <img
                   src={Greenhouse}
                   alt="Greenhouse Job Board"
-                  className="w-13 h-7"
+                  className="w-13 h-4 mr-1"
                   style={{ display: "inline-block" }}
                 />
               ) : job.job_board === "LEVER" ? (
                 <img
                   src={Lever}
                   alt="Lever Job Board"
-                  className="w-13 h-7"
+                  className="w-13 h-4 mr-1"
                   style={{ display: "inline-block" }}
                 />
               ) : null}
