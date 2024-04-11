@@ -21,7 +21,7 @@ export const action: ActionFunction = async (args) => {
         if (!jobUrl || !userId)
           return jsonWithError({}, "Invalid request: missing jobUrl or userId");
 
-        const result = await supabase.from("applications").upsert({
+        const result = await supabase.from("applications").insert({
           job_url: jobUrl.toString(),
           user_id: userId.toString(),
           applied: true,
