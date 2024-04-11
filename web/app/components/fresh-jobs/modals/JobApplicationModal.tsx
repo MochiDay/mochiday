@@ -1,3 +1,4 @@
+import { useRevalidator } from "@remix-run/react";
 import { createContext, useContext, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useApplication } from "~/hooks/useApplication";
@@ -24,6 +25,7 @@ export const JobApplicationModal = ({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { job, setJob } = useContext(JobApplicationModalContext);
   const { markAsApplied } = useApplication();
+  const revalidator = useRevalidator();
 
   return (
     <dialog
@@ -75,6 +77,7 @@ export const JobApplicationModal = ({
                 });
               } else {
                 await markAsApplied(job.job_url, userId);
+                revalidator.revalidate();
               }
               return;
             }
