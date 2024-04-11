@@ -89,10 +89,10 @@ export function JobRow({ job, type }: { job: JobExtended; type: JobRowType }) {
                 : "bg-success"
             }  hover:bg-opacity-80 flex flex-col justify-center items-center h-full tooltip tooltip-left hover:cursor-pointer active:bg-opacity-100`}
             data-tip={
-              type === JobRowType.NEW_JOB
-                ? "Apply"
-                : job.applied
+              job.applied
                 ? "Applied!"
+                : type === JobRowType.NEW_JOB
+                ? "Apply"
                 : "Manually Apply"
             }
             onClick={async () => {

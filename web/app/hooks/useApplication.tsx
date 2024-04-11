@@ -1,4 +1,3 @@
-import { toast } from "sonner";
 import { API_Actions } from "~/types/api";
 
 export const useApplication = () => {
@@ -8,15 +7,10 @@ export const useApplication = () => {
       formData.append("action", API_Actions.MARK_AS_APPLIED);
       formData.append("jobUrl", jobUrl);
       formData.append("userId", userId);
-      console.log("useApplication formData", formData);
-      const response = await fetch("/api/application", {
+      await fetch("/api/application", {
         method: "POST",
         body: formData,
       });
-      if (response.ok) {
-        toast.success("🎉 Applied to job!");
-      }
-      return response;
     },
   };
 };
