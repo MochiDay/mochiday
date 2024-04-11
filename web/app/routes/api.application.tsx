@@ -1,5 +1,4 @@
 import { ActionFunction } from "@remix-run/cloudflare";
-import { jsonWithError, jsonWithSuccess } from "remix-toast";
 import { API_Actions } from "~/types/api";
 
 export const action: ActionFunction = async (args) => {
@@ -8,10 +7,7 @@ export const action: ActionFunction = async (args) => {
   const formData = await args.request.formData();
 
   if (!formData || !formData.get("action"))
-    return jsonWithError(
-      {},
-      "Invalid request: no form data or action provided"
-    );
+    return new Response("Invalid request", { status: 400 });
 
   switch (formData.get("action")) {
     case API_Actions.MARK_AS_APPLIED: {
@@ -19,20 +15,23 @@ export const action: ActionFunction = async (args) => {
         const jobUrl = formData.get("jobUrl");
         const userId = formData.get("userId");
         if (!jobUrl || !userId)
-          return jsonWithError({}, "Invalid request: missing jobUrl or userId");
+          return new Response("Invalid request: need jobURL and userId", {
+            status: 400,
+          });
 
-        await supabase.from("applications").insert({
+        const result = await supabase.from("applications").insert({
           job_url: jobUrl.toString(),
           user_id: userId.toString(),
           applied: true,
         });
-        return jsonWithSuccess({}, "🎉 Applied to job!");
+        console.log(result.data);
+        return new Response("Applied to job", { status: 200 });
       } catch (error) {
         console.error("Error applying to job", error);
-        return jsonWithError({}, "Failed to apply to job" + error);
+        return new Response("Error applying to job", { status: 500 });
       }
     }
     default:
-      return jsonWithError({}, "Invalid action");
+      return new Response("Invalid request", { status: 400 });
   }
 };

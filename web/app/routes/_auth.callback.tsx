@@ -1,6 +1,5 @@
 import { getAuth } from "@clerk/remix/ssr.server";
 import { LoaderFunction, redirect } from "@remix-run/cloudflare";
-import { redirectWithError, redirectWithSuccess } from "remix-toast";
 
 export const loader: LoaderFunction = async (args) => {
   const { userId } = await getAuth(args);
@@ -9,7 +8,7 @@ export const loader: LoaderFunction = async (args) => {
   const user = await supabase.from("users").select("*").eq("user_id", userId);
 
   if (user.error) {
-    return redirectWithError("/", "Failed to fetch user data");
+    return redirect("/");
   }
 
   if (user.data.length === 0) {
@@ -17,7 +16,7 @@ export const loader: LoaderFunction = async (args) => {
       user_id: userId,
     });
   }
-  return redirectWithSuccess("/dashboard", "Logged in successfully");
+  return redirect("/dashboard");
 };
 
 export default function AuthCallback() {

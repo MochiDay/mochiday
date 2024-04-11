@@ -74,7 +74,7 @@ export const JobApplicationModal = ({
                   closeButton: true,
                 });
               } else {
-                markAsApplied(job.job_url, userId);
+                await markAsApplied(job.job_url, userId);
               }
               return;
             }
