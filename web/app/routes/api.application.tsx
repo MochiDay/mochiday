@@ -1,4 +1,5 @@
 import { ActionFunction } from "@remix-run/cloudflare";
+import { jsonWithError } from "remix-toast";
 import { API_Actions } from "~/types/api";
 
 export const action: ActionFunction = async (args) => {
@@ -24,7 +25,13 @@ export const action: ActionFunction = async (args) => {
           user_id: userId.toString(),
           applied: true,
         });
-        console.log(result.data);
+        if (result.error) {
+          console.error("Error applying to job", result.error);
+          return jsonWithError(
+            {},
+            "Error applying to job" + result.error.message
+          );
+        }
         return new Response("Applied to job", { status: 200 });
       } catch (error) {
         console.error("Error applying to job", error);
