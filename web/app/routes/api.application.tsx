@@ -6,7 +6,7 @@ export const action: ActionFunction = async (args) => {
   const supabase = args.context.supabase();
 
   const formData = await args.request.formData();
-  console.log("formData", formData);
+
   if (!formData || !formData.get("action"))
     return jsonWithError(
       {},
@@ -21,12 +21,12 @@ export const action: ActionFunction = async (args) => {
         if (!jobUrl || !userId)
           return jsonWithError({}, "Invalid request: missing jobUrl or userId");
 
-        const result = await supabase.from("applications").insert({
+        await supabase.from("applications").insert({
           job_url: jobUrl.toString(),
           user_id: userId.toString(),
           applied: true,
         });
-        return jsonWithSuccess({}, "🎉 Applied to job!" + result);
+        return jsonWithSuccess({}, "🎉 Applied to job!");
       } catch (error) {
         console.error("Error applying to job", error);
         return jsonWithError({}, "Failed to apply to job" + error);

@@ -1,16 +1,17 @@
+import { useFetcher } from "@remix-run/react";
 import { API_Actions } from "~/types/api";
 
 export const useApplication = () => {
+  const fetcher = useFetcher();
   return {
-    markAsApplied: async (jobUrl: string, userId: string) => {
+    markAsApplied: (jobUrl: string, userId: string) => {
       const formData = new FormData();
       formData.append("action", API_Actions.MARK_AS_APPLIED);
       formData.append("jobUrl", jobUrl);
       formData.append("userId", userId);
-      console.log("formData", formData);
-      await fetch("/api/application", {
-        method: "POST",
-        body: formData,
+      fetcher.submit(formData, {
+        method: "post",
+        action: "/api/application",
       });
     },
   };
