@@ -20,7 +20,7 @@ export const action: ActionFunction = async (args) => {
             status: 400,
           });
 
-        const result = await supabase.from("applications").insert({
+        const result = await supabase.from("applications").upsert({
           job_url: jobUrl.toString(),
           user_id: userId.toString(),
           applied: true,
