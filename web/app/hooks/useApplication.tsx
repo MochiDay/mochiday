@@ -7,6 +7,7 @@ export const useApplication = () => {
       formData.append("action", API_Actions.MARK_AS_APPLIED);
       formData.append("jobUrl", jobUrl);
       formData.append("userId", userId);
+      console.log("formData", formData);
       await fetch("/api/application", {
         method: "POST",
         body: formData,
