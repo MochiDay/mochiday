@@ -10,11 +10,13 @@ import logging
 class JobSite(Enum):
     LEVER = "lever.co"
     GREENHOUSE = "boards.greenhouse.io/*/jobs/*"
+    ASHBY = "ashbyhq.com"
     ANGELLIST = "TODO"
     WORKABLE = "TODO"
     INDEED = "TODO"
     GLASSDOOR = "TODO"
     LINKEDIN = "TODO"
+    
 
 
 class TBS(Enum):
@@ -117,6 +119,25 @@ def get_greenhouse_job_details(link: str) -> list[str]:
     return [company_name, position, image]
 
 
+def get_ashby_job_details(link: str) -> list[str]:
+    response = requests.get(link)
+    soup = BeautifulSoup(response.content, "html.parser")
+    head = soup.find("head")
+    title = head.find("title").string
+
+    company_name = title.split(" @ ")[1].strip() if " @ " in title else title.strip()
+    position = title.split(" @ ")[0].strip() if " @ " in title else "Unknown"
+
+    image = (
+        head.find("meta", property="og:image")["content"]
+        if head.find("meta", property="og:title")
+        else None
+    )
+
+    return [company_name, position, image]
+    
+    
+
 def handle_job_insert(supabase: any, job_urls: list[str], job_site: JobSite):
     for link in job_urls:
         try:
@@ -125,6 +146,8 @@ def handle_job_insert(supabase: any, job_urls: list[str], job_site: JobSite):
                 job_details = get_lever_job_details(link)
             elif job_site == JobSite.GREENHOUSE:
                 job_details = get_greenhouse_job_details(link)
+            elif job_site == JobSite.ASHBY:
+                job_details = get_ashby_job_details(link)
             if (
                 job_details[0] == "Not found – 404 error"
                 and job_details[1] == "Unknown"
@@ -150,6 +173,7 @@ regex = {
     JobSite.INDEED: "TODO",
     JobSite.GLASSDOOR: "TODO",
     JobSite.LINKEDIN: "TODO",
+    JobSite.ASHBY: r"https://app.ashbyhq.com/[^/]+/[^/]+",
 }
 
 
@@ -184,6 +208,10 @@ class JobSearchResultCleaner:
                 for url in cleaned_urls
             ]
             return urls
+        if self.job_site == JobSite.ASHBY:
+            urls = [re.sub(r"\?.*", "", url) for url in urls]
+            return [url + "/application?embed=js" for url in urls]
+        
         return urls
 
     def clean(self, job_search_result: list) -> list[str]:
@@ -197,3 +225,5 @@ class JobSearchResultCleaner:
         except Exception as e:
             print(f"Error cleaning job search result: {e}")
             return []
+
+
