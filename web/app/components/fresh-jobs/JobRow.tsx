@@ -1,6 +1,5 @@
 import { Link } from "@remix-run/react";
 import { useContext, useState } from "react";
-import LeverPlaceHolderImage from "~/assets/img/lever-logo-full.svg";
 import { JobExtended, JobRowType } from "~/types/general";
 import {
   IconExternalLink,
@@ -9,11 +8,16 @@ import {
 } from "@tabler/icons-react";
 import { JobApplicationModalContext } from "./modals/JobApplicationModal";
 import { toast } from "sonner";
+import Greenhouse from "~/assets/img/greenhouse-badge.svg";
+import Lever from "~/assets/img/lever-badge.svg";
+import PlaceHolderImage from "~/assets/img/placeholder-image.png";
+import Ashby from "~/assets/img/ashby-badge.svg";
 
 export function JobRow({ job, type }: { job: JobExtended; type: JobRowType }) {
   const [hovered, setHovered] = useState(false);
   const [loading, setLoading] = useState(false);
   const { setJob, modalId } = useContext(JobApplicationModalContext);
+
   return (
     <>
       <div
@@ -26,19 +30,35 @@ export function JobRow({ job, type }: { job: JobExtended; type: JobRowType }) {
         <div className="flex p-2 flex-row justify-start items-center w-full">
           <div className="flex flex-col justify-center items-center ml-2">
             <img
-              src={job.image ?? LeverPlaceHolderImage}
+              src={job.image ?? PlaceHolderImage}
               alt={job.company}
               className="w-10 h-10 md:w-16 md:h-16 object-contain"
             />
           </div>
           <div className="ml-6">
-            {/* check if is less than 24 hrs ago */}
-            {new Date(job.created_at).getTime() > Date.now() - 86400000 && (
-              <div className="badge bg-red text-white py-2 badge-sm text-xs font-bold">
-                Very Fresh
-              </div>
-            )}
+            <div className="job-board-logo">
+              {job.job_board && (
+                <img
+                  src={
+                    job.job_board === "GREENHOUSE"
+                      ? Greenhouse
+                      : job.job_board === "LEVER"
+                      ? Lever
+                      : Ashby
+                  }
+                  alt={job.job_board}
+                  className="w-13 h-4 mr-0.5"
+                  style={{ display: "inline-block" }}
+                />
+              )}
 
+              {/* check if the job is fresh i.e. created within the last 24 hours */}
+              {new Date(job.created_at).getTime() > Date.now() - 86400000 && (
+                <div className="badge  bg-red text-white py-2 badge-sm text-xs font-bold">
+                  Very Fresh
+                </div>
+              )}
+            </div>
             <h2 className="font-black text-lg flex flex-row">
               {job.company}
               {hovered && type === JobRowType.NEW_JOB && (
