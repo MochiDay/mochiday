@@ -1,9 +1,9 @@
 import { Link } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import LeverPlaceHolderImage from "~/assets/img/lever-logo-full.svg";
 import { JobExtended, JobRowType, JobStatus } from "~/types/general";
 import { IconExternalLink } from "@tabler/icons-react";
 import { JobRow } from "../fresh-jobs/JobRow";
+import PlaceHolderImage from "~/assets/img/placeholder-image.png";
 
 export function JobStatusRow({
   job,
@@ -63,7 +63,7 @@ export function JobStatusRow({
             } flex flex-col justify-center items-center ml-2`}
           >
             <img
-              src={job.image ?? LeverPlaceHolderImage}
+              src={job.image ?? PlaceHolderImage}
               alt={job.company}
               className="w-12 h-12 object-contain"
             />

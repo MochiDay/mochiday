@@ -1,6 +1,5 @@
 import { Link } from "@remix-run/react";
 import { useContext, useState } from "react";
-import LeverPlaceHolderImage from "~/assets/img/lever-logo-full.svg";
 import { JobExtended, JobRowType } from "~/types/general";
 import {
   IconExternalLink,
@@ -11,6 +10,7 @@ import { JobApplicationModalContext } from "./modals/JobApplicationModal";
 import { toast } from "sonner";
 import Greenhouse from "~/assets/img/greenhouse.svg";
 import Lever from "~/assets/img/lever-badge.svg";
+import PlaceHolderImage from "~/assets/img/placeholder-image.png";
 
 export function JobRow({ job, type }: { job: JobExtended; type: JobRowType }) {
   const [hovered, setHovered] = useState(false);
@@ -28,7 +28,7 @@ export function JobRow({ job, type }: { job: JobExtended; type: JobRowType }) {
         <div className="flex p-2 flex-row justify-start items-center w-full">
           <div className="flex flex-col justify-center items-center ml-2">
             <img
-              src={job.image ?? LeverPlaceHolderImage}
+              src={job.image ?? PlaceHolderImage}
               alt={job.company}
               className="w-10 h-10 md:w-16 md:h-16 object-contain"
             />
