@@ -8,14 +8,16 @@ import {
 } from "@tabler/icons-react";
 import { JobApplicationModalContext } from "./modals/JobApplicationModal";
 import { toast } from "sonner";
-import Greenhouse from "~/assets/img/greenhouse.svg";
+import Greenhouse from "~/assets/img/greenhouse-badge.svg";
 import Lever from "~/assets/img/lever-badge.svg";
 import PlaceHolderImage from "~/assets/img/placeholder-image.png";
+import Ashby from "~/assets/img/ashby-badge.svg";
 
 export function JobRow({ job, type }: { job: JobExtended; type: JobRowType }) {
   const [hovered, setHovered] = useState(false);
   const [loading, setLoading] = useState(false);
   const { setJob, modalId } = useContext(JobApplicationModalContext);
+
   return (
     <>
       <div
@@ -35,21 +37,21 @@ export function JobRow({ job, type }: { job: JobExtended; type: JobRowType }) {
           </div>
           <div className="ml-6">
             <div className="job-board-logo">
-              {job.job_board === "GREENHOUSE" ? (
+              {job.job_board && (
                 <img
-                  src={Greenhouse}
-                  alt="Greenhouse Job Board"
+                  src={
+                    job.job_board === "GREENHOUSE"
+                      ? Greenhouse
+                      : job.job_board === "LEVER"
+                      ? Lever
+                      : Ashby
+                  }
+                  alt={job.job_board}
                   className="w-13 h-4 mr-0.5"
                   style={{ display: "inline-block" }}
                 />
-              ) : job.job_board === "LEVER" ? (
-                <img
-                  src={Lever}
-                  alt="Lever Job Board"
-                  className="w-13 h-4 mr-0.5"
-                  style={{ display: "inline-block" }}
-                />
-              ) : null}
+              )}
+
               {/* check if the job is fresh i.e. created within the last 24 hours */}
               {new Date(job.created_at).getTime() > Date.now() - 86400000 && (
                 <div className="badge  bg-red text-white py-2 badge-sm text-xs font-bold">
