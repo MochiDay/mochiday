@@ -173,7 +173,7 @@ regex = {
     JobSite.INDEED: "TODO",
     JobSite.GLASSDOOR: "TODO",
     JobSite.LINKEDIN: "TODO",
-    JobSite.ASHBY: r"https://app.ashbyhq.com/[^/]+/[^/]+",
+    JobSite.ASHBY: r"https://jobs.ashbyhq.com/[^/]+/[^/]+",
 }
 
 
@@ -225,5 +225,3 @@ class JobSearchResultCleaner:
         except Exception as e:
             print(f"Error cleaning job search result: {e}")
             return []
-
-
