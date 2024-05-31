@@ -1,6 +1,7 @@
 import { NavLink } from "@remix-run/react";
 
 import { AppConfig } from "~/config/config";
+import { NavItem } from "./NavItem";
 
 export default function NavItems({ pathname }: { pathname: string }) {
   return (
@@ -8,25 +9,13 @@ export default function NavItems({ pathname }: { pathname: string }) {
       <div className="w-full rounded-box font-bold">
         {AppConfig.dashboardNavItems.map((item, id) => (
           <NavLink key={item.name} to={item.link} prefetch="intent">
-            <div
+            <NavItem
+              name={item.name}
+              isActive={pathname === item.link}
+              activeIcon={item.activeIcon}
+              icon={item.icon}
               key={id}
-              className={`flex flex-row items-center w-full cursor-pointer my-1
-              ${pathname === item.link ? "bg-black" : "hover:bg-gray-100"}
-              `}
-              style={{
-                padding: "10px",
-                borderRadius: "10px",
-              }}
-            >
-              <div
-                className={`mr-2 ${pathname === item.link ? "text-white" : ""}`}
-              >
-                {pathname === item.link ? item.activeIcon : item.icon}
-              </div>
-              <span className={`${pathname === item.link ? "text-white" : ""}`}>
-                {item.name}
-              </span>
-            </div>
+            />
           </NavLink>
         ))}
       </div>
