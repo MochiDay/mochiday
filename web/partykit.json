@@ -1,0 +1,10 @@
+{
+  "$schema": "https://www.partykit.io/schema.json",
+  "name": "my-remix-app-party",
+  "main": "party/index.ts",
+  "compatibilityDate": "2024-05-31",
+  "port": 1998,
+  "parties": {
+    "presence": "party/presence.ts"
+  }
+}
