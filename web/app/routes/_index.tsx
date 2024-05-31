@@ -1,6 +1,6 @@
 import { type MetaFunction } from "@remix-run/cloudflare";
 import { Link } from "@remix-run/react";
-import Room from "~/components/room";
+import { Room } from "~/components/room";
 import PresenceProvider from "~/presence/presence-context";
 
 export const meta: MetaFunction = () => {
