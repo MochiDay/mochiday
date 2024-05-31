@@ -1,7 +1,7 @@
 import OtherCursors from "~/presence/other-cursors";
 import useCursorTracking from "~/presence/use-cursors";
 
-export function Room() {
+export default function Room() {
   useCursorTracking("document");
   return <OtherCursors />;
 }
