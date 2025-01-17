@@ -32,5 +32,5 @@ class SupabaseClient:
         # remove everything that's more than 2 months old
         current_time = datetime.now()
         self.client.table("jobs").delete().lt(
-            "created_at", current_time - timedelta(days=60)
+            "created_at", current_time - timedelta(days=365)
         ).execute()
